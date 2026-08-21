@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <time.h>
 
 
 #define RED "\033[31m"
@@ -47,7 +48,9 @@ int do_test_from_file(char * filename);
 
 int is_str_all_space(char * str);
 
-// СЃРґРµР»Р°С‚СЊ С‚РµСЃС‚С‹ - РІ РїСЂРѕС†РµСЃСЃРµ, РјР°РєСЂРѕСЃС‹ - РµСЃС‚СЊ
+void print_ascii_cat();
+
+// сделать тесты - в процессе, макросы - есть
 
 int main() {
 	int cmd = 0;
@@ -69,6 +72,10 @@ int main() {
 
 		case 's':
 			sq_eq_interactive();
+			break;
+
+		case 'c':
+			print_ascii_cat();
 			break;
 
 		default:
@@ -298,4 +305,17 @@ int is_str_all_space(char * str) {
 		ch = str[++i];
 	}
 	return is;
+}
+
+void print_ascii_cat() {
+	printf(""
+"     /\\__/\\ " ENDL
+"    /`    '\\ " ENDL
+"  === 0  0 === " ENDL
+"    \\  --  / " ENDL
+"   /        \\ " ENDL
+"  /          \\ " ENDL
+" |            | " ENDL
+"  \\  ||  ||  / " ENDL
+"   \\_oo__oo_/#######o" ENDL);
 }

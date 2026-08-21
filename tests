@@ -8,3 +8,4 @@ inf inf -inf [31mError: invalid coefficients[0m
 1 2 1 [33mSolution: -1[0m
 1 -2 1 [33mSolution: 1[0m
 1 60 -360 [32mSolutions: -65.4965 5.49648[0m
+0 -987654321 12345 [33mSolution: 1.24993e-05[0m
