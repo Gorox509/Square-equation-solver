@@ -15,14 +15,16 @@
 #define BASE_FMT "\033[0m"
 
 #define ENDL "\n"
+//------------------------------
+#define ANY_NUM_CODE -3		//|
+#define TWO_ROOTS_CODE -15	//|
+#define ONE_ROOT_CODE 9		//|
+#define NO_ROOTS_CODE 0		//|
+//------------------------------
 
-#define ANY_NUM_CODE -3
-#define TWO_ROOTS_CODE 2
-#define ONE_ROOT_CODE 1
-#define NO_ROOTS_CODE 0
 #define WRONG_COEFS_CODE -1
 
-#define GENERAL_ERROR -1
+#define GENERAL_ERROR -1	//poison 
 
 
 #define MAX_STR_SIZE 100
@@ -51,7 +53,7 @@ int is_str_all_space(char * str);
 void print_ascii_cat();
 
 // сделать тесты - в процессе, макросы - есть
-
+// enum  это круто фр фр
 int main() {
 	int cmd = 0;
 
@@ -90,13 +92,19 @@ int main() {
 
 
 int square_equation_solve(double a, double b, double c, double * x1, double * x2)	{ // ax^2 + bx + c = 0
-
+	
 	if (!isfinite(a) || !isfinite(b) || !isfinite(c) || x1 == NULL || x2 == NULL)
 		return -1;
 
 	const double epsilon = 1e-6;
 
-	if (abs(a) < epsilon)
+	if (a < 0.) {
+		a = fabs(a);
+		b *= -1.;
+		c *= -1;
+	}
+
+	if (fabs(a) < epsilon)
 		return linear_equation_solve(b, c, x1);
 
 	double D = b * b - 4 * a * c;
@@ -104,14 +112,14 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 	if (D < 0)
 		return NO_ROOTS_CODE;
 
-	else if (abs(D) < epsilon) {
-		*x1 = (-b) / (2 * a);
+	else if (fabs(D) < epsilon) {
+		*x1 = (0 - b) / (2 * a);
 		return ONE_ROOT_CODE;
 	}
 
 	else {
-		*x1 = (-b - sqrt(D)) / (2 * a);
-		*x2 = (-b + sqrt(D)) / (2 * a);
+		*x1 = (0 - b - sqrt(D)) / (2 * a);
+		*x2 = (0 - b + sqrt(D)) / (2 * a);
 		return TWO_ROOTS_CODE;
 	}
 }
@@ -120,13 +128,18 @@ int linear_equation_solve(double k, double b, double * x) { // ax + b = 0
 
 	const double epsilon = 1e-6;
 
+	if (k < 0.) {
+		k = fabs(k);
+		b *= -1;
+	}
+
 	if ((fabs(k) < epsilon)) {
 			if (fabs(b) < epsilon)
 				return ANY_NUM_CODE; // any number
 			return NO_ROOTS_CODE; // no solutions
 		}
 
-	*x = -b / k;
+	*x = (0 - b) / k;
 	return ONE_ROOT_CODE;
 }
 
@@ -221,7 +234,7 @@ int sq_eq_interactive() {
 int test_interactive_from_file() {
 	char filename[MAX_STR_SIZE] = "";
 
-	int n = 0, m = 0;
+	int n = 0, m = 0, i = 0;
 
 	printf("Enter test file name: ");
 
@@ -238,8 +251,9 @@ int test_interactive_from_file() {
 	}
 
 	FILE * fp = fopen(".temp", "r");
-
+	
 	while (1) {
+		i++;
 		char correct_ans[MAX_STR_SIZE], ans[MAX_STR_SIZE];
 
 		if (fgets(correct_ans, MAX_STR_SIZE, fp) == NULL || fgets(ans, MAX_STR_SIZE, fp) == NULL) {
@@ -255,7 +269,7 @@ int test_interactive_from_file() {
 		else {
 			n++;
 			m++;
-			printf("Wrong Answer.\nCorrect answer: %sYour answer: %s", correct_ans, ans);
+			printf("Wrong Answer №%d.\nCorrect answer: %sYour answer: %s\n", i, correct_ans, ans);
 		}
 	}
 }
