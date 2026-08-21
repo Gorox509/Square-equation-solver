@@ -4,6 +4,9 @@
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdlib.h>
+#include <ctype.h>
+
 
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
@@ -13,6 +16,14 @@
 #define ENDL "\n"
 
 #define ANY_NUM_CODE -3
+#define TWO_ROOTS_CODE 2
+#define ONE_ROOT_CODE 1
+#define NO_ROOTS_CODE 0
+#define WRONG_COEFS_CODE -1
+
+#define GENERAL_ERROR -1
+
+
 #define MAX_STR_SIZE 100
 
 
@@ -34,6 +45,9 @@ int test_interactive_from_file();
 
 int do_test_from_file(char * filename);
 
+int is_str_all_space(char * str);
+
+// сделать тесты - в процессе, макросы - есть
 
 int main() {
 	int cmd = 0;
@@ -48,12 +62,13 @@ int main() {
 		case 'q':
 			return 0;
 
-		case 's':
-			sq_eq_interactive();
-			break;
-
 		case 't':
 			test_interactive_from_file();
+			getchar();
+			break;
+
+		case 's':
+			sq_eq_interactive();
 			break;
 
 		default:
@@ -69,7 +84,7 @@ int main() {
 
 int square_equation_solve(double a, double b, double c, double * x1, double * x2)	{ // ax^2 + bx + c = 0
 
-	if (!isfinite(a) || !isfinite(b) || !isfinite(c) || x1 == 0 || x2 == 0)
+	if (!isfinite(a) || !isfinite(b) || !isfinite(c) || x1 == NULL || x2 == NULL)
 		return -1;
 
 	const double epsilon = 1e-6;
@@ -80,32 +95,32 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 	double D = b * b - 4 * a * c;
 
 	if (D < 0)
-		return 0;
+		return NO_ROOTS_CODE;
 
 	else if (abs(D) < epsilon) {
 		*x1 = (-b) / (2 * a);
-		return 1;
+		return ONE_ROOT_CODE;
 	}
 
 	else {
 		*x1 = (-b - sqrt(D)) / (2 * a);
 		*x2 = (-b + sqrt(D)) / (2 * a);
-		return 2;
+		return TWO_ROOTS_CODE;
 	}
 }
 
-int linear_equation_solve(double a, double b, double * x) { // ax + b = 0
+int linear_equation_solve(double k, double b, double * x) { // ax + b = 0
 
 	const double epsilon = 1e-6;
 
-	if ((fabs(a) < epsilon)) {
+	if ((fabs(k) < epsilon)) {
 			if (fabs(b) < epsilon)
 				return ANY_NUM_CODE; // any number
-			return 0; // no solutions
+			return NO_ROOTS_CODE; // no solutions
 		}
 
-	*x = -b / a;
-	return 1;
+	*x = -b / k;
+	return ONE_ROOT_CODE;
 }
 
 
@@ -116,15 +131,15 @@ void print_sq_eq_sols_stdout(double x1, double x2, int n_sol) {
 
 void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol) {
 	switch(n_sol) {
-	case 0:
+	case NO_ROOTS_CODE:
 		fprintf(fp, YELLOW "No solutions" BASE_FMT ENDL);
 		break;
 
-	case 1:
+	case ONE_ROOT_CODE:
 		fprintf(fp, YELLOW "Solution: %lg" BASE_FMT ENDL, x1);
 		break;
 
-	case 2:
+	case TWO_ROOTS_CODE:
 		fprintf(fp, GREEN "Solutions: %lg %lg" BASE_FMT ENDL, x1, x2);
 		break;
 
@@ -132,7 +147,7 @@ void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol) {
 		fprintf(fp, YELLOW "Any number" BASE_FMT ENDL);
 		break;
 
-	case -1:
+	case WRONG_COEFS_CODE:
 		fprintf(fp, RED "Error: invalid coefficients" BASE_FMT ENDL);
 		break;
 
@@ -148,8 +163,12 @@ int input_square_coefs(double * a, double * b, double * c) {
 
 	for (int attempts = 10; attempts > -1; --attempts) {
 
-		if (scanf("%lg %lg %lg", a, b, c) == 3)
-			return 0;
+		if (scanf("%lg %lg %lg", a, b, c) == 3) {
+			char next[MAX_STR_SIZE] = "";
+			fgets(next, MAX_STR_SIZE, stdin);
+			if (strlen(next) == 0 || is_str_all_space(next))
+				return 0;
+		}
 
 		if (attempts)
 			printf(RED "Wrong input format. Try again: " BASE_FMT);
@@ -157,7 +176,7 @@ int input_square_coefs(double * a, double * b, double * c) {
 		clear_buffer();
 	}
 	printf(RED "Too many attempts.\n" BASE_FMT);
-	return -1;
+	return GENERAL_ERROR;
 }
 
 
@@ -180,15 +199,13 @@ int sq_eq_interactive() {
 
 	input_err = input_square_coefs(&a, &b, &c);
 
-	if (input_err) {
-		return -1;
+	if (input_err == GENERAL_ERROR) {
+		return GENERAL_ERROR;
 	}
 
 	n_sol = square_equation_solve(a, b, c, &x1, &x2);
 
 	print_sq_eq_sols_stdout(x1, x2, n_sol);
-
-	clear_buffer();
 
 	return 0;
 }
@@ -202,16 +219,15 @@ int test_interactive_from_file() {
 	printf("Enter test file name: ");
 
 	if (scanf("%s", filename) != 1) {
-		printf("Error during filename reading\n");
+		printf(RED "Error during filename reading" BASE_FMT ENDL);
 		return -1;
 	}
 
 	int test_err = do_test_from_file(filename);
 
-	if (test_err == -1) {
-		printf("Error: no such file\n");
-		remove(".temp"); //todo просто файл без временных файлов
-		return -1;
+	if (test_err == GENERAL_ERROR) {
+		printf(RED "Error: no such file" BASE_FMT ENDL);
+		return GENERAL_ERROR;
 	}
 
 	FILE * fp = fopen(".temp", "r");
@@ -225,7 +241,6 @@ int test_interactive_from_file() {
 			remove(".temp");
 			return 0;
 		}
-
 
 		if (!strcmp(ans, correct_ans)) {
 			m++;
@@ -243,7 +258,7 @@ int do_test_from_file(char * filename) {
 	FILE * fp = fopen(filename, "r");
 
 	if (fp == NULL) {
-		return -1;
+		return GENERAL_ERROR;
 	}
 
 	FILE * tempp = fopen(".temp", "w+");
@@ -268,5 +283,19 @@ int do_test_from_file(char * filename) {
 		fputs(correct_ans, tempp);
 		print_sq_eq_sols_fp(tempp, x1, x2, n_sols);
 	}
+}
 
+
+int is_str_all_space(char * str) {
+	if (strlen(str) == 0) 
+		return 1;
+
+	int ch = str[0], i = 0, is = 1;
+	
+	while (ch != '\0') {
+		if (!isspace(ch)) 
+			is = 0;
+		ch = str[++i];
+	}
+	return is;
 }
