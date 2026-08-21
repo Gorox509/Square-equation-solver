@@ -1,0 +1,10 @@
+0 0 0 [33mAny number[0m
+0 0 1 [33mNo solutions[0m
+0 1 0 [33mSolution: -0[0m
+0 1 1 [33mSolution: -1[0m
+1 0 1 [33mNo solutions[0m
+1 0 -1 [32mSolutions: -1 1[0m
+inf inf -inf [31mError: invalid coefficients[0m
+1 2 1 [33mSolution: -1[0m
+1 -2 1 [33mSolution: 1[0m
+1 60 -360 [32mSolutions: -65.4965 5.49648[0m
