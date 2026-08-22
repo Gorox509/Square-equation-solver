@@ -18,18 +18,20 @@ const int MAX_STR_SIZE = 100;
 #define BASE_FMT "\033[0m"
 
 #define ENDL "\n"
-//-------------------------------------
-const int ANY_NUM_CODE = -3;		//|
-const int TWO_ROOTS_CODE = -15;	    //|
-const int ONE_ROOT_CODE = 9;		//|
-const int NO_ROOTS_CODE = 0;		//|
-//-------------------------------------
+//---------------------------
+enum escape_codes { //|
+CORRECT = 1,              //|
+INCORRECT = 0,            //|
+ANY_NUM_CODE = -3,		  //|
+TWO_ROOTS_CODE = -15,	  //| // todo enum
+ONE_ROOT_CODE = 9,	      //|
+NO_ROOTS_CODE = -67,	  //|
+WRONG_COEFS_CODE = -1,	  //|
+};						  //|
+//---------------------------
 
-const int WRONG_COEFS_CODE = -1;
 
 const int GENERAL_ERROR = -13;	//poison 
-
-// todo use consts instead of defines - done +-
 
 const double epsilon = 1e-6;
 
@@ -85,7 +87,7 @@ int main() {
 
 		switch (cmd) {
 		case 'q':
-			return 0;
+			return CORRECT;
 
 		case 'f':
 			format_test_interactive_from_file();
@@ -117,14 +119,14 @@ int main() {
 		printf("Enter command: ");
 
 	}
-	return 0;
+	return CORRECT;
 }
 
 
 int square_equation_solve(double a, double b, double c, double * x1, double * x2)	{ // ax^2 + bx + c = 0
 	
 	if (!isfinite(a) || !isfinite(b) || !isfinite(c) || x1 == NULL || x2 == NULL)
-		return -1;
+		return WRONG_COEFS_CODE;
 
 	*x1 = NAN;
 	*x2 = NAN;
@@ -148,7 +150,7 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 		return ONE_ROOT_CODE;
 	}
 
-	// todo (check inf + nan) - done; + implement isinf() + isnan() - џ ѕч ъръ
+	// todoimplement isinf() + isnan() - џ ѕч ъръ
 	else {
 		*x1 = (0 - b - sqrt(D)) / (2 * a);
 		*x2 = (0 - b + sqrt(D)) / (2 * a);
@@ -156,8 +158,7 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 	}
 }
 
-int linear_equation_solve(double k, double b, double * x) { // ax + b = 0
-	//todo global const (epsilon) - done || func - done
+int linear_equation_solve(double k, double b, double * x) { // kx + b = 0
 	if (k < 0.) {
 		k = fabs(k);
 		b *= -1;
@@ -180,7 +181,7 @@ void print_sq_eq_sols_stdout(double x1, double x2, int n_sol) {
 }
 
 
-void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol) { // todo zero ptr & other assertions - done;;;;
+void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol) {
 	if (fp == NULL) 
 		exit(0);
 
@@ -224,7 +225,7 @@ int input_square_coefs(double * a, double * b, double * c) {
 			char next[MAX_STR_SIZE] = "";
 			fgets(next, MAX_STR_SIZE, stdin);
 			if (strlen(next) == 0 || is_str_all_space(next))
-				return 0;
+				return CORRECT;
 		}
 
 		if (attempts)
@@ -264,7 +265,7 @@ int sq_eq_interactive() {
 
 	print_sq_eq_sols_stdout(x1, x2, n_sol);
 
-	return 0;
+	return CORRECT;
 }
 
 
@@ -275,7 +276,7 @@ int format_test_interactive_from_file() {
 
 	if (scanf("%s", filename) != 1) {
 		printf(RED "Error during filename reading" BASE_FMT ENDL);
-		return -1;
+		return GENERAL_ERROR;
 	}
 
 	int test_err = do_format_test_from_file(filename);
@@ -291,7 +292,7 @@ int format_test_interactive_from_file() {
 }
 
 int do_format_comparison_from_file(FILE * fp) {
-	int n_tests = 0, n_failed_tests = 0, i = 0; // todo rename - done
+	int n_tests = 0, n_failed_tests = 0, i = 0;
 	while (1) {
 		i++;
 		char correct_ans[MAX_STR_SIZE] = "", ans[MAX_STR_SIZE] = "";
@@ -300,7 +301,7 @@ int do_format_comparison_from_file(FILE * fp) {
 			printf("Wrong Answers: %d/%d\n", n_failed_tests, n_tests);
 			fclose(fp);
 			remove(".temp");
-			return 0;
+			return CORRECT;
 		}
 		n_tests++;
 		if (!strcmp(ans, correct_ans));
@@ -309,6 +310,7 @@ int do_format_comparison_from_file(FILE * fp) {
 			printf("Wrong Answer Й%d.\nCorrect answer: %sYour answer: %s\n", i, correct_ans, ans);
 		}
 	}
+	return GENERAL_ERROR;
 }
 
 
@@ -332,7 +334,7 @@ int do_format_test_from_file(char filename[]) {
 		if (feof(fp)) {
 			fclose(tempp);
 			fclose(fp);
-			return 0;
+			return CORRECT;
 		}
 
 		fscanf(fp, "%lg %lg %lg ", &a, &b, &c);
@@ -342,6 +344,7 @@ int do_format_test_from_file(char filename[]) {
 		fputs(correct_ans, tempp);
 		print_sq_eq_sols_fp(tempp, x1, x2, n_sols); //crash
 	}
+	return GENERAL_ERROR;
 }
 
 
