@@ -10,6 +10,7 @@
 
 
 
+const int MAX_STR_SIZE = 100;
 
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
@@ -17,19 +18,20 @@
 #define BASE_FMT "\033[0m"
 
 #define ENDL "\n"
-//------------------------------
-#define ANY_NUM_CODE -3		//|
-#define TWO_ROOTS_CODE -15	//|
-#define ONE_ROOT_CODE 9		//|
-#define NO_ROOTS_CODE 0		//|
-//------------------------------
+//-------------------------------------
+const int ANY_NUM_CODE = -3;		//|
+const int TWO_ROOTS_CODE = -15;	    //|
+const int ONE_ROOT_CODE = 9;		//|
+const int NO_ROOTS_CODE = 0;		//|
+//-------------------------------------
 
-#define WRONG_COEFS_CODE -1
+const int WRONG_COEFS_CODE = -1;
 
-#define GENERAL_ERROR -13	//poison 
+const int GENERAL_ERROR = -13;	//poison 
 
+// todo use consts instead of defines - done +-
 
-#define MAX_STR_SIZE 100
+const double epsilon = 1e-6;
 
 
 int square_equation_solve(double a, double b, double c, double * x1, double * x2);
@@ -54,9 +56,14 @@ int is_str_all_space(char * str);
 
 void print_ascii_cat();
 
+int is_all_next_input_space();
+
+int double_is_zero(double x);
+
+int do_format_comparison_from_file(FILE * fp);
 
 
-#include "testing.c"
+#include "testing.cpp"
 
 
 
@@ -65,10 +72,15 @@ void print_ascii_cat();
 int main() {
 	int cmd = 0;
 
-	printf("Possible commands:\n\'q\': quit\n\'s\': solve equation\n\'f\': test format from file with\n\'t\': test solver from file\nEnter command: ");
+	printf("Possible commands:\n"
+		   "\'q\': quit\n"
+		   "\'s\': solve equation\n\'f\': test format from file with\n\'t\': test solver from file\nEnter command: ");
 
 	while ((cmd = getchar()) != EOF) {
-		if (clear_buffer() > 1)
+		if (isspace(cmd))
+			continue;
+
+		if (!is_all_next_input_space())
 			cmd = 0;
 
 		switch (cmd) {
@@ -77,7 +89,6 @@ int main() {
 
 		case 'f':
 			format_test_interactive_from_file();
-			getchar();
 			break;
 
 		case 't': {
@@ -88,7 +99,6 @@ int main() {
 				break;
 			}
 			test_solver_from_file(filename);
-			getchar();
 			break;
 		}
 
@@ -116,8 +126,6 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 	if (!isfinite(a) || !isfinite(b) || !isfinite(c) || x1 == NULL || x2 == NULL)
 		return -1;
 
-	const double epsilon = 1e-6;
-
 	*x1 = NAN;
 	*x2 = NAN;
 
@@ -127,7 +135,7 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 		c *= -1;
 	}
 
-	if (fabs(a) < epsilon)
+	if (double_is_zero(a))
 		return linear_equation_solve(b, c, x1);
 
 	double D = b * b - 4 * a * c;
@@ -135,11 +143,12 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 	if (D < 0)
 		return NO_ROOTS_CODE;
 
-	else if (fabs(D) < epsilon) {
+	else if (double_is_zero(D)) {
 		*x1 = (0 - b) / (2 * a);
 		return ONE_ROOT_CODE;
 	}
 
+	// todo (check inf + nan) - done; + implement isinf() + isnan() - џ ѕч ъръ
 	else {
 		*x1 = (0 - b - sqrt(D)) / (2 * a);
 		*x2 = (0 - b + sqrt(D)) / (2 * a);
@@ -148,19 +157,18 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 }
 
 int linear_equation_solve(double k, double b, double * x) { // ax + b = 0
-
-	const double epsilon = 1e-6;
-
+	//todo global const (epsilon) - done || func - done
 	if (k < 0.) {
 		k = fabs(k);
 		b *= -1;
 	}
 
-	if ((fabs(k) < epsilon)) {
-			if (fabs(b) < epsilon)
-				return ANY_NUM_CODE; // any number
-			return NO_ROOTS_CODE; // no solutions
+	if (double_is_zero(k)) {
+		if (double_is_zero(b)) {
+			return ANY_NUM_CODE; // any number
 		}
+		return NO_ROOTS_CODE; // no solutions
+	}
 
 	*x = (0 - b) / k;
 	return ONE_ROOT_CODE;
@@ -172,7 +180,13 @@ void print_sq_eq_sols_stdout(double x1, double x2, int n_sol) {
 }
 
 
-void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol) {
+void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol) { // todo zero ptr & other assertions - done;;;;
+	if (fp == NULL) 
+		exit(0);
+
+	if (isinf(x1) || isinf(x2)) //can be NaN;
+		exit(0);
+
 	switch(n_sol) {
 	case NO_ROOTS_CODE:
 		fprintf(fp, YELLOW "No solutions" BASE_FMT ENDL);
@@ -257,8 +271,6 @@ int sq_eq_interactive() {
 int format_test_interactive_from_file() {
 	char filename[MAX_STR_SIZE] = "";
 
-	int n = 0, m = 0, i = 0;
-
 	printf("Enter test file name: ");
 
 	if (scanf("%s", filename) != 1) {
@@ -274,31 +286,37 @@ int format_test_interactive_from_file() {
 	}
 
 	FILE * fp = fopen(".temp", "r");
-	
+
+	return do_format_comparison_from_file(fp);
+}
+
+int do_format_comparison_from_file(FILE * fp) {
+	int n_tests = 0, n_failed_tests = 0, i = 0; // todo rename - done
 	while (1) {
 		i++;
-		char correct_ans[MAX_STR_SIZE], ans[MAX_STR_SIZE];
+		char correct_ans[MAX_STR_SIZE] = "", ans[MAX_STR_SIZE] = "";
 
 		if (fgets(correct_ans, MAX_STR_SIZE, fp) == NULL || fgets(ans, MAX_STR_SIZE, fp) == NULL) {
-			printf("Wrong Answers: %d/%d\n", n, m);
+			printf("Wrong Answers: %d/%d\n", n_failed_tests, n_tests);
 			fclose(fp);
 			remove(".temp");
 			return 0;
 		}
-
-		if (!strcmp(ans, correct_ans)) {
-			m++;
-		}
+		n_tests++;
+		if (!strcmp(ans, correct_ans));
 		else {
-			n++;
-			m++;
+			n_failed_tests++;
 			printf("Wrong Answer Й%d.\nCorrect answer: %sYour answer: %s\n", i, correct_ans, ans);
 		}
 	}
 }
 
 
-int do_format_test_from_file(char * filename) {
+int do_format_test_from_file(char filename[]) {
+
+	if (filename == NULL)
+		return GENERAL_ERROR;
+
 	FILE * fp = fopen(filename, "r");
 
 	if (fp == NULL) {
@@ -307,25 +325,22 @@ int do_format_test_from_file(char * filename) {
 
 	FILE * tempp = fopen(".temp", "w+");
 	while (1) {
-		double a = 0., b = 0., c = 0., x1 = 0., x2 = 0.;
+		double a = NAN, b = NAN, c = NAN, x1 = NAN, x2 = NAN;
 
 		char correct_ans[MAX_STR_SIZE] = "";
 
-		int ch = 0;
-
-		if ((ch = getc(fp)) == EOF) {
+		if (feof(fp)) {
 			fclose(tempp);
 			fclose(fp);
 			return 0;
 		}
-		ungetc(ch, fp);
 
 		fscanf(fp, "%lg %lg %lg ", &a, &b, &c);
 		fgets(correct_ans, MAX_STR_SIZE, fp);
 
 		int n_sols = square_equation_solve(a, b, c, &x1, &x2);
 		fputs(correct_ans, tempp);
-		print_sq_eq_sols_fp(tempp, x1, x2, n_sols);
+		print_sq_eq_sols_fp(tempp, x1, x2, n_sols); //crash
 	}
 }
 
@@ -355,4 +370,25 @@ void print_ascii_cat() {
 " |            | " ENDL
 "  \\  ||  ||  / " ENDL
 "   \\_oo__oo_/#######o" ENDL);
+}
+
+
+int is_all_next_input_space() {
+	int ch = 0, i = 0;
+
+	while (ch != EOF && ch != '\n') {
+		ch = getchar();
+		if (!isspace(ch))
+			++i;
+	}
+	if (!i)
+		return 1;
+	return 0;
+}
+
+
+int double_is_zero(double x) {
+	if (fabs(x) < epsilon)
+		return 1;
+	return 0;
 }
