@@ -23,7 +23,7 @@
 
 #define MAX_STR_SIZE 100
 
-int square_equation_solve(double a, double b, double c, double * x1, double * x2);
+
 int test_solver_from_file(char * filename);
 int do_solver_test(char * line);
 int is_doubles_equal(double x, double y);

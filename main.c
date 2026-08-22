@@ -4,11 +4,11 @@
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
-#include <stdlib.h>
+#include <stdlib.h> 
 #include <ctype.h>
 #include <time.h>
 
-#include "testing.c"
+
 
 
 #define RED "\033[31m"
@@ -56,12 +56,16 @@ void print_ascii_cat();
 
 
 
+#include "testing.c"
+
+
+
 // сделать тесты - в процессе, макросы - есть
 // enum  это круто фр фр
 int main() {
 	int cmd = 0;
 
-	printf("Possible commands:\n\'q\': quit\n\'s\': solve equation\n\'t\': test from file\nEnter command: ");
+	printf("Possible commands:\n\'q\': quit\n\'s\': solve equation\n\'f\': test format from file with\n\'t\': test solver from file\nEnter command: ");
 
 	while ((cmd = getchar()) != EOF) {
 		if (clear_buffer() > 1)
@@ -71,12 +75,12 @@ int main() {
 		case 'q':
 			return 0;
 
-		case 't':
+		case 'f':
 			format_test_interactive_from_file();
 			getchar();
 			break;
 
-		case 'f': {
+		case 't': {
 			char filename[MAX_STR_SIZE] = "";
 			printf("Enter test file name: ");
 			if (scanf("%s", filename) != 1) {
@@ -352,6 +356,3 @@ void print_ascii_cat() {
 "  \\  ||  ||  / " ENDL
 "   \\_oo__oo_/#######o" ENDL);
 }
-
-
-
