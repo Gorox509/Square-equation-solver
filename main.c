@@ -8,6 +8,8 @@
 #include <ctype.h>
 #include <time.h>
 
+#include "testing.c"
+
 
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
@@ -24,7 +26,7 @@
 
 #define WRONG_COEFS_CODE -1
 
-#define GENERAL_ERROR -1	//poison 
+#define GENERAL_ERROR -13	//poison 
 
 
 #define MAX_STR_SIZE 100
@@ -44,13 +46,15 @@ int clear_buffer();
 
 int sq_eq_interactive();
 
-int test_interactive_from_file();
+int format_test_interactive_from_file();
 
-int do_test_from_file(char * filename);
+int do_format_test_from_file(char * filename);
 
 int is_str_all_space(char * str);
 
 void print_ascii_cat();
+
+
 
 // сделать тесты - в процессе, макросы - есть
 // enum  это круто фр фр
@@ -68,9 +72,21 @@ int main() {
 			return 0;
 
 		case 't':
-			test_interactive_from_file();
+			format_test_interactive_from_file();
 			getchar();
 			break;
+
+		case 'f': {
+			char filename[MAX_STR_SIZE] = "";
+			printf("Enter test file name: ");
+			if (scanf("%s", filename) != 1) {
+				printf(RED "Error during filename reading" BASE_FMT ENDL);
+				break;
+			}
+			test_solver_from_file(filename);
+			getchar();
+			break;
+		}
 
 		case 's':
 			sq_eq_interactive();
@@ -97,6 +113,9 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 		return -1;
 
 	const double epsilon = 1e-6;
+
+	*x1 = NAN;
+	*x2 = NAN;
 
 	if (a < 0.) {
 		a = fabs(a);
@@ -231,7 +250,7 @@ int sq_eq_interactive() {
 }
 
 
-int test_interactive_from_file() {
+int format_test_interactive_from_file() {
 	char filename[MAX_STR_SIZE] = "";
 
 	int n = 0, m = 0, i = 0;
@@ -243,7 +262,7 @@ int test_interactive_from_file() {
 		return -1;
 	}
 
-	int test_err = do_test_from_file(filename);
+	int test_err = do_format_test_from_file(filename);
 
 	if (test_err == GENERAL_ERROR) {
 		printf(RED "Error: no such file" BASE_FMT ENDL);
@@ -275,7 +294,7 @@ int test_interactive_from_file() {
 }
 
 
-int do_test_from_file(char * filename) {
+int do_format_test_from_file(char * filename) {
 	FILE * fp = fopen(filename, "r");
 
 	if (fp == NULL) {
@@ -333,3 +352,6 @@ void print_ascii_cat() {
 "  \\  ||  ||  / " ENDL
 "   \\_oo__oo_/#######o" ENDL);
 }
+
+
+
