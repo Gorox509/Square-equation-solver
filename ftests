@@ -1,0 +1,212 @@
+0 0 0 [33mAny number[0m
+0 0 1 [33mNo solutions[0m
+0 1 0 [33mSolution: 0[0m
+0 1 1 [33mSolution: -1[0m
+1 0 1 [33mNo solutions[0m
+1 0 -1 [32mSolutions: -1 1[0m
+inf inf -inf [31mError: invalid coefficients[0m
+1 2 1 [33mSolution: -1[0m
+1 -2 1 [33mSolution: 1[0m
+1 60 -360 [32mSolutions: -65.4965 5.49648[0m
+0 -987654321 12345 [33mSolution: 1.24993e-05[0m
+0 0 0 [33mAny number[0m
+0 0 1 [33mNo solutions[0m
+0 1 0 [33mSolution: 0[0m
+0 1 1 [33mSolution: -1[0m
+0 1 -1 [33mSolution: 1[0m
+0 2 4 [33mSolution: -2[0m
+0 -2 4 [33mSolution: 2[0m
+0 5 -15 [33mSolution: 3[0m
+0 -5 -15 [33mSolution: -3[0m
+0 100 1 [33mSolution: -0.01[0m
+1 0 1 [33mNo solutions[0m
+1 0 -1 [32mSolutions: -1 1[0m
+1 0 -4 [32mSolutions: -2 2[0m
+1 0 -9 [32mSolutions: -3 3[0m
+1 0 -16 [32mSolutions: -4 4[0m
+1 0 -25 [32mSolutions: -5 5[0m
+1 0 -100 [32mSolutions: -10 10[0m
+4 0 -1 [32mSolutions: -0.5 0.5[0m
+9 0 -4 [32mSolutions: -0.666667 0.666667[0m
+25 0 -1 [32mSolutions: -0.2 0.2[0m
+1 2 1 [33mSolution: -1[0m
+1 -2 1 [33mSolution: 1[0m
+1 4 4 [33mSolution: -2[0m
+1 -4 4 [33mSolution: 2[0m
+1 6 9 [33mSolution: -3[0m
+1 -6 9 [33mSolution: 3[0m
+1 10 25 [33mSolution: -5[0m
+1 -10 25 [33mSolution: 5[0m
+4 4 1 [33mSolution: -0.5[0m
+4 -4 1 [33mSolution: 0.5[0m
+1 0 0 [33mSolution: 0[0m
+2 0 0 [33mSolution: 0[0m
+-1 0 0 [33mSolution: 0[0m
+5 0 0 [33mSolution: 0[0m
+-5 0 0 [33mSolution: 0[0m
+2 4 2 [33mSolution: -1[0m
+2 -4 2 [33mSolution: 1[0m
+3 6 3 [33mSolution: -1[0m
+3 -6 3 [33mSolution: 1[0m
+5 10 5 [33mSolution: -1[0m
+5 -10 5 [33mSolution: 1[0m
+1 1 1 [33mNo solutions[0m
+1 -1 1 [33mNo solutions[0m
+1 2 2 [33mNo solutions[0m
+1 -2 2 [33mNo solutions[0m
+2 2 2 [33mNo solutions[0m
+3 3 3 [33mNo solutions[0m
+4 -4 4 [33mNo solutions[0m
+5 5 5 [33mNo solutions[0m
+10 -10 10 [33mNo solutions[0m
+1 1 0 [32mSolutions: -1 0[0m
+1 -1 0 [32mSolutions: 0 1[0m
+1 2 0 [32mSolutions: -2 0[0m
+1 -2 0 [32mSolutions: 0 2[0m
+1 5 0 [32mSolutions: -5 0[0m
+1 -5 0 [32mSolutions: 0 5[0m
+2 4 0 [32mSolutions: -2 0[0m
+2 -4 0 [32mSolutions: 0 2[0m
+5 15 0 [32mSolutions: -3 0[0m
+5 -15 0 [32mSolutions: 0 3[0m
+1 3 2 [32mSolutions: -2 -1[0m
+1 -3 2 [32mSolutions: 1 2[0m
+1 5 6 [32mSolutions: -3 -2[0m
+1 -5 6 [32mSolutions: 2 3[0m
+1 7 12 [32mSolutions: -4 -3[0m
+1 -7 12 [32mSolutions: 3 4[0m
+1 9 20 [32mSolutions: -5 -4[0m
+1 -9 20 [32mSolutions: 4 5[0m
+2 6 4 [32mSolutions: -2 -1[0m
+2 -6 4 [32mSolutions: 1 2[0m
+3 15 18 [32mSolutions: -3 -2[0m
+3 -15 18 [32mSolutions: 2 3[0m
+1 60 -360 [32mSolutions: -65.4965 5.49648[0m
+1 -60 -360 [32mSolutions: -5.49648 65.4965[0m
+2 8 -10 [32mSolutions: -5 1[0m
+2 -8 -10 [32mSolutions: -1 5[0m
+3 12 -15 [32mSolutions: -5 1[0m
+3 -12 -15 [32mSolutions: -1 5[0m
+10 0 -10 [32mSolutions: -1 1[0m
+10 20 -30 [32mSolutions: -3 1[0m
+10 -20 -30 [32mSolutions: -1 3[0m
+0 -987654321 12345 [33mSolution: 1.24993e-05[0m
+inf inf -inf [31mError: invalid coefficients[0m
+-inf 1 1 [31mError: invalid coefficients[0m
+nan 1 1 [31mError: invalid coefficients[0m
+1 nan 1 [31mError: invalid coefficients[0m
+1 1 nan [31mError: invalid coefficients[0m
+inf 0 0 [31mError: invalid coefficients[0m
+0 inf 0 [31mError: invalid coefficients[0m
+0 0 inf [31mError: invalid coefficients[0m
+-inf -inf -inf [31mError: invalid coefficients[0m
+nan nan nan [31mError: invalid coefficients[0m
+0 3.5 7 [33mSolution: -2[0m
+0 -3.5 7 [33mSolution: 2[0m
+0 7.5 -3 [33mSolution: 0.4[0m
+0 -7.5 -3 [33mSolution: -0.4[0m
+0 12.5 2.5 [33mSolution: -0.2[0m
+0 -12.5 2.5 [33mSolution: 0.2[0m
+0 0.5 2.5 [33mSolution: -5[0m
+0 -0.5 2.5 [33mSolution: 5[0m
+0 0.25 -2.5 [33mSolution: 10[0m
+0 -0.25 -2.5 [33mSolution: -10[0m
+0 0.125 1.25 [33mSolution: -10[0m
+0 -0.125 1.25 [33mSolution: 10[0m
+0 0.2 -0.8 [33mSolution: 4[0m
+0 -0.2 -0.8 [33mSolution: -4[0m
+0 0.75 1.5 [33mSolution: -2[0m
+0 -0.75 1.5 [33mSolution: 2[0m
+0 1.25 -2.5 [33mSolution: 2[0m
+0 -1.25 -2.5 [33mSolution: -2[0m
+0 2.5 1.25 [33mSolution: -0.5[0m
+0 -2.5 1.25 [33mSolution: 0.5[0m
+0 0.0000009 1 [33mNo solutions[0m
+0 -0.0000009 1 [33mNo solutions[0m
+0 0.0000011 1.1 [33mSolution: -1e+06[0m
+0 -0.0000011 1.1 [33mSolution: 1e+06[0m
+0 0.0000009 0 [33mAny number[0m
+0 -0.0000009 0 [33mAny number[0m
+0 0 0.0000009 [33mAny number[0m
+0 0 -0.0000009 [33mAny number[0m
+0 0 0.0000011 [33mNo solutions[0m
+0 0 -0.0000011 [33mNo solutions[0m
+0.5 1 0.5 [33mSolution: -1[0m
+0.5 -1 0.5 [33mSolution: 1[0m
+1.5 3 1.5 [33mSolution: -1[0m
+1.5 -3 1.5 [33mSolution: 1[0m
+2.5 5 2.5 [33mSolution: -1[0m
+2.5 -5 2.5 [33mSolution: 1[0m
+0.75 1.5 0.75 [33mSolution: -1[0m
+0.75 -1.5 0.75 [33mSolution: 1[0m
+1.25 2.5 1.25 [33mSolution: -1[0m
+1.25 -2.5 1.25 [33mSolution: 1[0m
+0.2 0.4 0.2 [33mSolution: -1[0m
+0.2 -0.4 0.2 [33mSolution: 1[0m
+0.05 0.1 0.05 [33mSolution: -1[0m
+0.05 -0.1 0.05 [33mSolution: 1[0m
+0.005 0.01 0.005 [33mSolution: -1[0m
+0.005 -0.01 0.005 [33mSolution: 1[0m
+0.0001 0.0002 0.0001 [33mSolution: -1[0m
+0.0001 -0.0002 0.0001 [33mSolution: 1[0m
+0.5 1.5 1 [32mSolutions: -2 -1[0m
+0.5 -1.5 1 [32mSolutions: 1 2[0m
+0.5 2.5 3 [32mSolutions: -3 -2[0m
+0.5 -2.5 3 [32mSolutions: 2 3[0m
+0.25 1.75 3 [32mSolutions: -4 -3[0m
+0.25 -1.75 3 [32mSolutions: 3 4[0m
+0.25 2.25 5 [32mSolutions: -5 -4[0m
+0.25 -2.25 5 [32mSolutions: 4 5[0m
+0.2 1 1.2 [32mSolutions: -3 -2[0m
+0.2 -1 1.2 [32mSolutions: 2 3[0m
+0.2 1.4 2.4 [32mSolutions: -4 -3[0m
+0.2 -1.4 2.4 [32mSolutions: 3 4[0m
+0.1 0.5 0.6 [32mSolutions: -3 -2[0m
+0.1 -0.5 0.6 [32mSolutions: 2 3[0m
+0.1 0.7 1.2 [32mSolutions: -4 -3[0m
+0.1 -0.7 1.2 [32mSolutions: 3 4[0m
+1.5 4.5 3 [32mSolutions: -2 -1[0m
+1.5 -4.5 3 [32mSolutions: 1 2[0m
+2.5 7.5 5 [32mSolutions: -2 -1[0m
+2.5 -7.5 5 [32mSolutions: 1 2[0m
+0.75 3.75 3 [32mSolutions: -4 -1[0m
+0.75 -3.75 3 [32mSolutions: 1 4[0m
+1.25 6.25 7.5 [32mSolutions: -3 -2[0m
+1.25 -6.25 7.5 [32mSolutions: 2 3[0m
+0.6 3 3.6 [32mSolutions: -3 -2[0m
+0.6 -3 3.6 [32mSolutions: 2 3[0m
+0.8 4 4.8 [32mSolutions: -3 -2[0m
+0.8 -4 4.8 [32mSolutions: 2 3[0m
+1.2 6 7.2 [32mSolutions: -3 -2[0m
+1.2 -6 7.2 [32mSolutions: 2 3[0m
+0.3 1.5 1.8 [32mSolutions: -3 -2[0m
+0.3 -1.5 1.8 [32mSolutions: 2 3[0m
+0.4 2.8 4 [32mSolutions: -5 -2[0m
+0.4 -2.8 4 [32mSolutions: 2 5[0m
+0.6 4.2 6 [32mSolutions: -5 -2[0m
+0.6 -4.2 6 [32mSolutions: 2 5[0m
+0.7 4.9 8.4 [32mSolutions: -4 -3[0m
+0.7 -4.9 8.4 [32mSolutions: 3 4[0m
+0.9 7.2 12.6 [32mSolutions: -5.41421 -2.58579[0m
+0.9 -7.2 12.6 [32mSolutions: 2.58579 5.41421[0m
+0.5 1 0.4999989 [32mSolutions: -1.00148 -0.998517[0m
+0.5 -1 0.4999989 [32mSolutions: 0.998517 1.00148[0m
+1.25 2.5 1.2499989 [32mSolutions: -1.00094 -0.999062[0m
+1.25 -2.5 1.2499989 [32mSolutions: 0.999062 1.00094[0m
+0.0000011 0.0022 -1 [32mSolutions: -2381.7 381.699[0m
+0.0000011 -0.0022 -1 [32mSolutions: -381.699 2381.7[0m
+0.0001 0.01 -1 [32mSolutions: -161.803 61.8034[0m
+0.0001 -0.01 -1 [32mSolutions: -61.8034 161.803[0m
+0.01 0.1 -1 [32mSolutions: -16.1803 6.18034[0m
+0.01 -0.1 -1 [32mSolutions: -6.18034 16.1803[0m
+0.1 0.01 -1 [32mSolutions: -3.21267 3.11267[0m
+0.1 -0.01 -1 [32mSolutions: -3.11267 3.21267[0m
+0.000000999 1 0 [33mSolution: 0[0m
+0.000001 1 0 [32mSolutions: -1e+06 0[0m
+0.000001001 1 0 [32mSolutions: -999001 0[0m
+0.000000999 0 1 [33mNo solutions[0m
+0.000001 0 1 [33mNo solutions[0m
+0.000001001 0 1 [33mNo solutions[0m
+0.000000999 0 0 [33mAny number[0m
+0.000001 0 0 [33mSolution: 0[0m
+0.000001001 0 0 [33mSolution: 0[0m

@@ -250,8 +250,8 @@ int clear_buffer() {
 
 
 int sq_eq_interactive() {
-	double a = 0., b = 0., c = 0.;
-	double x1 = 0., x2 = 0.;
+	double a = NAN, b = NAN, c = NAN;
+	double x1 = NAN, x2 = NAN;
 	int n_sol = 0, input_err = 0;
 
 	input_err = input_square_coefs(&a, &b, &c);
