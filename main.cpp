@@ -10,7 +10,8 @@
 
 
 
-const int MAX_STR_SIZE = 100;
+const int MAX_STR_LEN = 100;
+const int MAX_BUF_LEN = 150;
 
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
@@ -19,50 +20,41 @@ const int MAX_STR_SIZE = 100;
 
 #define ENDL "\n"
 //---------------------------
-enum escape_codes { //|
-CORRECT = 1,              //|
-INCORRECT = 0,            //|
+enum escape_codes {       //|
 ANY_NUM_CODE = -3,		  //|
-TWO_ROOTS_CODE = -15,	  //| // todo enum
+TWO_ROOTS_CODE = -15,	  //| // todo real enum - done
 ONE_ROOT_CODE = 9,	      //|
-NO_ROOTS_CODE = -67,	  //|
+NO_ROOTS_CODE = -30,	  //|
 WRONG_COEFS_CODE = -1,	  //|
 };						  //|
 //---------------------------
-
+const int CORRECT = 1;
+const int INCORRECT = 0;
 
 const int GENERAL_ERROR = -13;	//poison 
 
 const double epsilon = 1e-6;
 
+//todo struct - done
+struct square_equation {
+	double a, b, c;
+	int roots_code;
+	double x1, x2;
+};
 
 int square_equation_solve(double a, double b, double c, double * x1, double * x2);
-
-int linear_equation_solve(double a, double b, double * x);
-
+int linear_equation_solve(double k, double b, double * x);
 void print_sq_eq_sols_stdout(double x1, double x2, int n);
-
 void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol);
-
 int input_square_coefs(double * a, double * b, double * c);
-
 int clear_buffer();
-
 int sq_eq_interactive();
-
-int format_test_interactive_from_file();
-
-int do_format_test_from_file(char * filename);
-
 int is_str_all_space(char * str);
-
 void print_ascii_cat();
-
 int is_all_next_input_space();
-
 int double_is_zero(double x);
-
-int do_format_comparison_from_file(FILE * fp);
+int custom_isinf(double x);
+int custom_isnan(double x);
 
 
 #include "testing.cpp"
@@ -72,11 +64,14 @@ int do_format_comparison_from_file(FILE * fp);
 // сделать тесты - в процессе, макросы - есть
 // enum  это круто фр фр
 int main() {
-	int cmd = 0;
-
+	int cmd = 0; 
+	
 	printf("Possible commands:\n"
 		   "\'q\': quit\n"
-		   "\'s\': solve equation\n\'f\': test format from file with\n\'t\': test solver from file\nEnter command: ");
+		   "\'s\': solve equation\n"
+		   "\'f\': test format from file with\n"
+		   "\'t\': test solver from file\n"
+		   "Enter command: ");
 
 	while ((cmd = getchar()) != EOF) {
 		if (isspace(cmd))
@@ -94,7 +89,7 @@ int main() {
 			break;
 
 		case 't': {
-			char filename[MAX_STR_SIZE] = "";
+			char filename[MAX_STR_LEN] = "";
 			printf("Enter test file name: ");
 			if (scanf("%s", filename) != 1) {
 				printf(RED "Error during filename reading" BASE_FMT ENDL);
@@ -150,7 +145,7 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 		return ONE_ROOT_CODE;
 	}
 
-	// todoimplement isinf() + isnan() - я хз как
+	// todoimplement isinf() + isnan()
 	else {
 		*x1 = (0 - b - sqrt(D)) / (2 * a);
 		*x2 = (0 - b + sqrt(D)) / (2 * a);
@@ -185,7 +180,7 @@ void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol) {
 	if (fp == NULL) 
 		exit(0);
 
-	if (isinf(x1) || isinf(x2)) //can be NaN;
+	if (custom_isinf(x1) || custom_isinf(x2)) //can be NaN;
 		exit(0);
 
 	switch(n_sol) {
@@ -222,8 +217,8 @@ int input_square_coefs(double * a, double * b, double * c) {
 	for (int attempts = 10; attempts > -1; --attempts) {
 
 		if (scanf("%lg %lg %lg", a, b, c) == 3) {
-			char next[MAX_STR_SIZE] = "";
-			fgets(next, MAX_STR_SIZE, stdin);
+			char next[MAX_STR_LEN] = "";
+			fgets(next, MAX_STR_LEN, stdin);
 			if (strlen(next) == 0 || is_str_all_space(next))
 				return CORRECT;
 		}
@@ -266,85 +261,6 @@ int sq_eq_interactive() {
 	print_sq_eq_sols_stdout(x1, x2, n_sol);
 
 	return CORRECT;
-}
-
-
-int format_test_interactive_from_file() {
-	char filename[MAX_STR_SIZE] = "";
-
-	printf("Enter test file name: ");
-
-	if (scanf("%s", filename) != 1) {
-		printf(RED "Error during filename reading" BASE_FMT ENDL);
-		return GENERAL_ERROR;
-	}
-
-	int test_err = do_format_test_from_file(filename);
-
-	if (test_err == GENERAL_ERROR) {
-		printf(RED "Error: no such file" BASE_FMT ENDL);
-		return GENERAL_ERROR;
-	}
-
-	FILE * fp = fopen(".temp", "r");
-
-	return do_format_comparison_from_file(fp);
-}
-
-int do_format_comparison_from_file(FILE * fp) {
-	int n_tests = 0, n_failed_tests = 0, i = 0;
-	while (1) {
-		i++;
-		char correct_ans[MAX_STR_SIZE] = "", ans[MAX_STR_SIZE] = "";
-
-		if (fgets(correct_ans, MAX_STR_SIZE, fp) == NULL || fgets(ans, MAX_STR_SIZE, fp) == NULL) {
-			printf("Wrong Answers: %d/%d\n", n_failed_tests, n_tests);
-			fclose(fp);
-			remove(".temp");
-			return CORRECT;
-		}
-		n_tests++;
-		if (!strcmp(ans, correct_ans));
-		else {
-			n_failed_tests++;
-			printf("Wrong Answer №%d.\nCorrect answer: %sYour answer: %s\n", i, correct_ans, ans);
-		}
-	}
-	return GENERAL_ERROR;
-}
-
-
-int do_format_test_from_file(char filename[]) {
-
-	if (filename == NULL)
-		return GENERAL_ERROR;
-
-	FILE * fp = fopen(filename, "r");
-
-	if (fp == NULL) {
-		return GENERAL_ERROR;
-	}
-
-	FILE * tempp = fopen(".temp", "w+");
-	while (1) {
-		double a = NAN, b = NAN, c = NAN, x1 = NAN, x2 = NAN;
-
-		char correct_ans[MAX_STR_SIZE] = "";
-
-		if (feof(fp)) {
-			fclose(tempp);
-			fclose(fp);
-			return CORRECT;
-		}
-
-		fscanf(fp, "%lg %lg %lg ", &a, &b, &c);
-		fgets(correct_ans, MAX_STR_SIZE, fp);
-
-		int n_sols = square_equation_solve(a, b, c, &x1, &x2);
-		fputs(correct_ans, tempp);
-		print_sq_eq_sols_fp(tempp, x1, x2, n_sols); //crash
-	}
-	return GENERAL_ERROR;
 }
 
 
@@ -392,6 +308,27 @@ int is_all_next_input_space() {
 
 int double_is_zero(double x) {
 	if (fabs(x) < epsilon)
+		return 1;
+	return 0;
+}
+
+
+int custom_isinf(double x) {
+	unsigned char * p = (unsigned char *) (&x + 1); 
+	unsigned char * p1 = p - 1;
+	unsigned char * p2 = p - 2;
+	
+	if ((*p1 == 0x7f || *p1 == 0xff) && *p2 == 0xf0)
+		return 1;
+	return 0;
+}
+
+int custom_isnan(double x) {
+	unsigned char * p = (unsigned char *) (&x + 1); 
+	unsigned char * p1 = p - 1;
+	unsigned char * p2 = p - 2;
+	
+	if (*p1 == 0x7f && *p2 > 0xf0)
 		return 1;
 	return 0;
 }

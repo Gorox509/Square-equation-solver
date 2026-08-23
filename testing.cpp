@@ -11,15 +11,18 @@
 
 #define ENDL "\n"
 
-
+//todo 1)isinf  2)isnan
 
 
 int test_solver_from_file(char filename[]);
 int do_solver_tests(FILE * fp);
 int do_solver_test(char * line);
 int is_doubles_equal(double x, double y);
-int do_reading_for_test_from_line(char * line, double * a, double * b, double * c, int * code_true, double * x1_true, double * x2_true);
-int do_comparison_and_print_of_wrong_tests(double a, double b, double c, int code_true, int code, double x1_true, double x2_true, double x1, double x2);
+int do_reading_for_test_from_line(char * line, square_equation * test);
+int do_comparison_and_print_of_wrong_tests(square_equation test_true, int code, double x1, double x2);
+int format_test_interactive_from_file();
+int do_format_test_from_file(char * filename);
+int do_format_comparison_from_file(FILE * fp);
 
 int test_solver_from_file(char filename[]) {
 	FILE * fp = fopen(filename, "r");
@@ -35,62 +38,64 @@ int test_solver_from_file(char filename[]) {
 
 int do_solver_tests(FILE * fp) {
 	int n_tests = 0, n_wrong_tests = 0;
-	char line[MAX_STR_SIZE] = "";
+	char line[MAX_STR_LEN] = "";
+	//todo read from buffer not from file - done
 
-	while (1) {
+	int i = 0;
+	char lines[MAX_BUF_LEN][MAX_STR_LEN] = {};
+	while (fgets(line, MAX_STR_LEN, fp) != NULL) {
+		strcpy(lines[i], line);
+		++i;
+	}
+	fclose(fp);
+
+
+	for (int j = 0; j < i; j++) {
 		int err = 0;
 
-		fgets(line, MAX_STR_SIZE, fp);
-
-		if (feof(fp)) {
-			printf("Wrong Answers: %d/%d\n", n_wrong_tests, n_tests);
-			fclose(fp);
-			return CORRECT;
-		}
-
-		err = do_solver_test(line);
+		err = do_solver_test(lines[j]);
 	
 		if (err == GENERAL_ERROR) {
-			fclose(fp);
 			return GENERAL_ERROR;
 		}
 		if (err == INCORRECT)
 			n_wrong_tests++;
 		n_tests++;
-	}
-	fclose(fp); // if for some case leaves while loop
-	return GENERAL_ERROR;
+	} 
+	printf("Wrong Answers: %d/%d\n", n_wrong_tests, n_tests);
+	return CORRECT;
 }
 
 
 // todo deal with magic const (output flag) - done
 // todo split into functions - done
 int do_solver_test(char line[]) {
-	double x1 = NAN, x2 = NAN, a = NAN, b = NAN, c = NAN, x1_true = NAN, x2_true = NAN;
-	int code_true = 0, code = 0;
+	square_equation test_true= {.a = NAN, .b = NAN, .c = NAN, .roots_code = 0, .x1 = NAN, .x2 = NAN};
+	double x1 = NAN, x2 = NAN;
+	int code = 0;
 
-	if (do_reading_for_test_from_line(line, &a, &b, &c, &code_true, &x1_true, &x2_true) == GENERAL_ERROR)
+	if (do_reading_for_test_from_line(line, &test_true) == GENERAL_ERROR)
 		return GENERAL_ERROR;
 
-	code = square_equation_solve(a, b, c, &x1, &x2);
+	code = square_equation_solve(test_true.a, test_true.b, test_true.c, &x1, &x2);
 
-	return do_comparison_and_print_of_wrong_tests(a, b, c, code_true, code, x1_true, x2_true, x1, x2);
+	return do_comparison_and_print_of_wrong_tests(test_true, code, x1, x2);
 }
 
 
-int do_reading_for_test_from_line(char line[], double * a, double * b, double * c, int * code_true, double * x1_true, double * x2_true) {
+int do_reading_for_test_from_line(char line[], square_equation * test) {
 	int err_flag = 0;
-	if (sscanf(line, "%lg %lg %lg %d ", a, b, c, code_true) != 4)
+	if (sscanf(line, "%lg %lg %lg %d ", &test->a, &test->b, &test->c, &test->roots_code) != 4)
 		err_flag = GENERAL_ERROR;
 
-	switch(*code_true) {
+	switch(test->roots_code) {
 	case ONE_ROOT_CODE:
-		if (sscanf(line, "%lg %lg %lg %d %lg", a, b, c, code_true, x1_true) != 5)
+		if (sscanf(line, "%lg %lg %lg %d %lg", &test->a, &test->b, &test->c, &test->roots_code, &test->x1) != 5)
 			err_flag = GENERAL_ERROR;
 		break;
 
 	case TWO_ROOTS_CODE:
-		if (sscanf(line, "%lg %lg %lg %d %lg %lg", a, b, c, code_true, x1_true, x2_true) != 6)
+		if (sscanf(line, "%lg %lg %lg %d %lg %lg", &test->a, &test->b, &test->c, &test->roots_code, &test->x1, &test->x2) != 6)
 			err_flag = GENERAL_ERROR;
 		break;
 	
@@ -106,21 +111,100 @@ int do_reading_for_test_from_line(char line[], double * a, double * b, double * 
 }
 
 
-int do_comparison_and_print_of_wrong_tests(double a, double b, double c, int code_true, int code, double x1_true, double x2_true, double x1, double x2) {
-	if (code == code_true) {
-		if (code_true == TWO_ROOTS_CODE)
-			if ((is_doubles_equal(x1_true, x1) && is_doubles_equal(x2_true, x2)) || (is_doubles_equal(x1_true, x2) && is_doubles_equal(x2_true, x1)))
+int do_comparison_and_print_of_wrong_tests(square_equation test_true, int code, double x1, double x2) {
+	if (code == test_true.roots_code) {
+		if (test_true.roots_code == TWO_ROOTS_CODE)
+			if ((is_doubles_equal(test_true.x1, x1) && is_doubles_equal(test_true.x2, x2)) || (is_doubles_equal(test_true.x1, x2) && is_doubles_equal(test_true.x2, x1)))
 				return CORRECT; // correct
-		if (code_true == ONE_ROOT_CODE)
-			if (is_doubles_equal(x1_true, x1))
+		if (test_true.roots_code == ONE_ROOT_CODE)
+			if (is_doubles_equal(test_true.x1, x1))
 				return CORRECT;
-		if (code_true == NO_ROOTS_CODE || code_true == ANY_NUM_CODE)
+		if (test_true.roots_code == NO_ROOTS_CODE || test_true.roots_code == ANY_NUM_CODE)
 			return CORRECT;
 	}
 	printf("Test FAILED: a = %lg, b = %lg, c = %lg\n"
-	"Expected: x1: %10lg, x2: %10lg, roots code: %3d\n"
-	"Got:      x1: %10lg, x2: %10lg, roots code: %3d\n", a, b, c, x1_true, x2_true, code_true, x1, x2, code);
+	"Expected: x1: %10lf, x2: %10lf, roots code: %3d\n"
+	"Got:      x1: %10lf, x2: %10lf, roots code: %3d\n\n", test_true.a, test_true.b, test_true.c, test_true.x1, test_true.x2, test_true.roots_code, x1, x2, code);
 	return INCORRECT; //wrong
+}
+
+
+int format_test_interactive_from_file() {
+	char filename[MAX_STR_LEN] = "";
+
+	printf("Enter test file name: ");
+
+	if (scanf("%s", filename) != 1) {
+		printf(RED "Error during filename reading" BASE_FMT ENDL);
+		return GENERAL_ERROR;
+	}
+
+	int test_err = do_format_test_from_file(filename);
+
+	if (test_err == GENERAL_ERROR) {
+		printf(RED "Error: no such file" BASE_FMT ENDL);
+		return GENERAL_ERROR;
+	}
+
+	FILE * fp = fopen(".temp", "r");
+
+	return do_format_comparison_from_file(fp);
+}
+
+int do_format_comparison_from_file(FILE * fp) {
+	int n_tests = 0, n_failed_tests = 0, i = 0;
+	while (1) {
+		i++;
+		char correct_ans[MAX_STR_LEN] = "", ans[MAX_STR_LEN] = "";
+
+		if (fgets(correct_ans, MAX_STR_LEN, fp) == NULL || fgets(ans, MAX_STR_LEN, fp) == NULL) {
+			printf("Wrong Answers: %d/%d\n", n_failed_tests, n_tests);
+			fclose(fp);
+			remove(".temp");
+			return CORRECT;
+		}
+		n_tests++;
+		if (!strcmp(ans, correct_ans));
+		else {
+			n_failed_tests++;
+			printf("Wrong Answer on line %d.\nCorrect answer: %sYour answer: %s\n", i, correct_ans, ans);
+		}
+	}
+	return GENERAL_ERROR;
+}
+
+
+int do_format_test_from_file(char filename[]) {
+
+	if (filename == NULL)
+		return GENERAL_ERROR;
+
+	FILE * fp = fopen(filename, "r");
+
+	if (fp == NULL) {
+		return GENERAL_ERROR;
+	}
+
+	FILE * tempp = fopen(".temp", "w+");
+	while (1) {
+		double a = NAN, b = NAN, c = NAN, x1 = NAN, x2 = NAN;
+
+		char correct_ans[MAX_STR_LEN] = "";
+
+		if (feof(fp)) {
+			fclose(tempp);
+			fclose(fp);
+			return CORRECT;
+		}
+
+		fscanf(fp, "%lg %lg %lg ", &a, &b, &c);
+		fgets(correct_ans, MAX_STR_LEN, fp);
+
+		int n_sols = square_equation_solve(a, b, c, &x1, &x2);
+		fputs(correct_ans, tempp);
+		print_sq_eq_sols_fp(tempp, x1, x2, n_sols);
+	}
+	return GENERAL_ERROR;
 }
 
 
