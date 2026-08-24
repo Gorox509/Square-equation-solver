@@ -1,63 +1,10 @@
-#include <TXLib.h>
-#include <stdio.h>
-#include <math.h>
-#include <assert.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h> 
-#include <ctype.h>
-#include <time.h>
+#include "defines.h"
 
 
 
-const int MAX_STR_LEN = 100;
-const int MAX_BUF_LEN = 150;
-
-#define RED "\033[31m"
-#define YELLOW "\033[33m"
-#define GREEN "\033[32m"
-#define BASE_FMT "\033[0m"
-
-#define ENDL "\n"
-//---------------------------
-enum escape_codes {       //|
-ANY_NUM_CODE = -3,		  //|
-TWO_ROOTS_CODE = -15,	  //| // todo real enum - done
-ONE_ROOT_CODE = 9,	      //|
-NO_ROOTS_CODE = -30,	  //|
-WRONG_COEFS_CODE = -1,	  //|
-};						  //|
-//---------------------------
-const int CORRECT = 1;
-const int INCORRECT = 0;
-
-const int GENERAL_ERROR = -13;	//poison 
-
-const double epsilon = 1e-6;
-
-//todo struct - done
-struct square_equation {
-	double a, b, c;
-	int roots_code;
-	double x1, x2;
-};
-
-int square_equation_solve(double a, double b, double c, double * x1, double * x2);
-int linear_equation_solve(double k, double b, double * x);
-void print_sq_eq_sols_stdout(double x1, double x2, int n);
-void print_sq_eq_sols_fp(FILE * fp, double x1, double x2, int n_sol);
-int input_square_coefs(double * a, double * b, double * c);
-int clear_buffer();
-int sq_eq_interactive();
-int is_str_all_space(char * str);
-void print_ascii_cat();
-int is_all_next_input_space();
-int double_is_zero(double x);
-int custom_isinf(double x);
-int custom_isnan(double x);
-
-
-#include "testing.cpp"
+#include "main.h"
+#include "testing.h"
+#include "plot.h"
 
 
 
@@ -65,12 +12,13 @@ int custom_isnan(double x);
 // enum  это круто фр фр
 int main() {
 	int cmd = 0; 
-	
+
 	printf("Possible commands:\n"
 		   "\'q\': quit\n"
 		   "\'s\': solve equation\n"
 		   "\'f\': test format from file with\n"
 		   "\'t\': test solver from file\n"
+		   "\'p\': plot graph\n"
 		   "Enter command: ");
 
 	while ((cmd = getchar()) != EOF) {
@@ -103,6 +51,30 @@ int main() {
 			sq_eq_interactive();
 			break;
 
+		case 'p': {
+			int plots_amount = 0, height = 0, width = 0;
+			printf("Enter amounts of plots: ");
+			scanf("%d", &plots_amount);
+			if (isinf(plots_amount) or plots_amount <= 0) {
+				printf("Wrong plots amount\n");
+				break;
+			}
+			printf("Enter height & width of canvas (50x50 is recommended): ");
+			scanf("%d %d", &height, &width);
+			if (isinf(height) || isinf(width) || height <= 0 || width <= 0) {
+				printf("Wrong canvas parameters\n");
+				break;
+			}
+			square_equation data[MAX_ARRAY_LEN];
+			for (int i = 0; i < plots_amount; ++i) 
+				input_compute_data_for_plot(&data[i]);
+			double scale = NAN;
+			//printf("Enter scale (x symbols per 1x1 square): ");
+			//scanf("%lg", &scale);
+			plot(data, plots_amount, 0, height, width);
+			break;
+		}
+
 		case 'c':
 			print_ascii_cat();
 			break;
@@ -125,7 +97,7 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 
 	*x1 = NAN;
 	*x2 = NAN;
-
+	
 	if (a < 0.) {
 		a = fabs(a);
 		b *= -1.;
@@ -145,7 +117,7 @@ int square_equation_solve(double a, double b, double c, double * x1, double * x2
 		return ONE_ROOT_CODE;
 	}
 
-	// todoimplement isinf() + isnan()
+	// todoimplement isinf() + isnan() - done
 	else {
 		*x1 = (0 - b - sqrt(D)) / (2 * a);
 		*x2 = (0 - b + sqrt(D)) / (2 * a);
@@ -318,7 +290,7 @@ int custom_isinf(double x) {
 	unsigned char * p1 = p - 1;
 	unsigned char * p2 = p - 2;
 	
-	if ((*p1 == 0x7f || *p1 == 0xff) && *p2 == 0xf0)
+	if ((*p1 == 0x7f || *p1 == 0xff) && *p2 == 0xf0) 
 		return 1;
 	return 0;
 }
@@ -332,3 +304,5 @@ int custom_isnan(double x) {
 		return 1;
 	return 0;
 }
+// todo plot in console
+// todo read about split files

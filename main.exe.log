@@ -1,0 +1,43 @@
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\прога\Square-equation-solver\main.exe,
+
+ВНЕЗАПНО: signal (8, 0x00): SIGFPE: Грубая ошибка в вычислениях. 
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#1: TXLib [Ver: 00173a, Rev: 175, Date: 2025-12-31 23:02:50 +0400], Instance: 0x00007FF6238A1890 (64-bit), Flags: Cmdre0, Thread: 0x50EC (Main), GetLastError(): 126 (Не найден указанный модуль). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6237BCF73 in C:\прога\Square-equation-solver\main.exe: (anonymous namespace)::TX::_txError() at C:/Program Files (x86)/TX/TXLib.h:11254
+# 1 0x00007FF6237BD7E8 in C:\прога\Square-equation-solver\main.exe: (anonymous namespace)::TX::_txOnSignal() at C:/Program Files (x86)/TX/TXLib.h:11338
+# 2 0x00007FFDCCDDBCB0 in C:\WINDOWS\System32\msvcrt.dll: XcptFilter()
+# 3 0x00007FF6237E7CB0 in C:\прога\Square-equation-solver\main.exe: __mingw_SEH_error_handler() at D:/W/B/src/mingw-w64/mingw-w64-crt/crt/crt_handler.c:105
+# 4 0x00007FFDCF1E479F in C:\WINDOWS\SYSTEM32\ntdll.dll: _chkstk()
+# 5 0x00007FFDCF0C5E97 in C:\WINDOWS\SYSTEM32\ntdll.dll: RtlLocateExtendedFeature()
+# 6 0x00007FFDCF1E40DE in C:\WINDOWS\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+# 7 0x00007FF6237A3A32 in C:\прога\Square-equation-solver\main.exe: get_parabola_vertex() at C:/РїСЂРѕРіР°/Square-equation-solver/plot.cpp:79
+# 8 0x00007FF6237A389A in C:\прога\Square-equation-solver\main.exe: plot_square() at C:/РїСЂРѕРіР°/Square-equation-solver/plot.cpp:42
+# 9 0x00007FF6237A37E4 in C:\прога\Square-equation-solver\main.exe: plot() at C:/РїСЂРѕРіР°/Square-equation-solver/plot.cpp:26
+#10 0x00007FF62376177C in C:\прога\Square-equation-solver\main.exe: main() at C:/РїСЂРѕРіР°/Square-equation-solver/main.cpp:58
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 175, Date: 2025-12-31 23:02:50 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	C:\Program Files (x86)\TX\TXLib.h
+Compiled:	Aug 24 2026 18:29:05, GNU g++ 16.1.0, std=202002L, MinGW-W64 Runtime 15.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, DEBUG
+Started:	Aug 24 2026 18:29:14
+
+Run file:	C:\прога\Square-equation-solver\main.exe
+Directory:	C:\прога\Square-equation-solver
+
+--------------------------------------------------

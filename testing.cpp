@@ -1,28 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <ctype.h>
-
-
-#define RED "\033[31m"
-#define YELLOW "\033[33m"
-#define GREEN "\033[32m"
-#define BASE_FMT "\033[0m"
-
-#define ENDL "\n"
-
-//todo 1)isinf  2)isnan
-
-
-int test_solver_from_file(char filename[]);
-int do_solver_tests(FILE * fp);
-int do_solver_test(char * line);
-int is_doubles_equal(double x, double y);
-int do_reading_for_test_from_line(char * line, square_equation * test);
-int do_comparison_and_print_of_wrong_tests(square_equation test_true, int code, double x1, double x2);
-int format_test_interactive_from_file();
-int do_format_test_from_file(char * filename);
-int do_format_comparison_from_file(FILE * fp);
+#include "defines.h"
+#include "testing.h"
+#include "main.h"
 
 int test_solver_from_file(char filename[]) {
 	FILE * fp = fopen(filename, "r");
