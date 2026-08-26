@@ -8,15 +8,9 @@
 #include <ctype.h>
 #include <time.h>
 
-#ifndef DEFINES_H
+#ifndef RANDOM_TESTS_H
 
-#define DEFINES_H
-
-
-
-const int MAX_STR_LEN = 100;
-const int MAX_BUF_LEN = 70;
-const int MAX_ARRAY_LEN = 100;
+#define RANDOM_TESTS_H
 
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
@@ -24,6 +18,9 @@ const int MAX_ARRAY_LEN = 100;
 #define BASE_FMT "\033[0m"
 
 #define ENDL "\n"
+
+
+const int MAX_STR_LEN = 100;
 //---------------------------
 enum escape_codes {       //|
 ANY_NUM_CODE = -3,		  //|
@@ -35,27 +32,13 @@ WRONG_COEFS_CODE = -1,	  //|
 //---------------------------
 const int CORRECT = 1;
 const int INCORRECT = 0;
-
-const int GENERAL_ERROR = -13;	
-
-const double epsilon = 1e-6;
-
-struct square_equation {
-	double a, b, c;
-	int roots_code;
-	double x1, x2;
-};
-
-struct Point {
-    double x;
-    double y;
-};
+const int GENERAL_ERROR = -13;
 
 
-struct PointInt {
-    int x;
-    int y;
-};
-
+void create_n_tests_to_file(FILE * fp, int n, int n_roots_needed);
+void create_test_two_roots_to_file(FILE * fp);
+void round_to_n_digits(double * x, int n);
+void create_test_one_root_to_file(FILE * fp);
+double rand_double();
 
 #endif

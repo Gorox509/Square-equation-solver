@@ -14,26 +14,48 @@ int input_compute_data_for_plot(square_equation * data) {
     return CORRECT;
 }
 
-void plot(square_equation data[], int plots_amount, double scale, int height, int width) {
-    if (isinf(scale)) {
+int plot(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width) {
+    if (isinf(scale) || height >= MAX_CANVAS_HEIGHT || width >= MAX_CANVAS_WIDTH) {
         printf(RED "Error: invalid scale" BASE_FMT ENDL);
+        return INCORRECT;
     }
-    plot_squares(data, plots_amount, scale, height, width);
+    if (fp == NULL) {
+        printf(RED "Error: wrong file" BASE_FMT ENDL);
+        return INCORRECT;
+    }
+    plot_squares(fp, data, plots_amount, scale, height, width);
+    return CORRECT;
 }
 
 
-void plot_squares(square_equation data[], int plots_amount, double scale, int height, int width) {
+void plot_squares(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width) {
     //Point vertex = {0, 0};
     //get_parabola_vertex(data, &vertex);
+    height += height % 2;
+    width += width % 2;
+    
+    int canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH];
     PointInt current = {.x = -width / 2, .y = height / 2}; // x is to the right, y is upwards, starting in upper left position
     for ( ; current.y > -height / 2; --current.y) {
         for ( ; current.x < width / 2; ++current.x) {
             int symbol = ' ';
             symbol = pick_symbol_to_draw_for_plots(current, data, plots_amount, scale);
-            printf("%2c", symbol);
+            //printf("%2c", symbol);
+            canvas[current.y + height / 2][current.x + width / 2] = symbol;
         }
         current.x = -width / 2;
-        printf(ENDL);
+        canvas[current.y + height / 2][width] = '\n';
+        //printf(ENDL);
+    }
+    print_canvas_to_file(fp, height, width, canvas, scale);
+}
+
+
+void print_canvas_to_file(FILE * fp, int height, int width, int canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH], double scale) {
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width + 1; ++j) { //width + 1 for \n symbol at the end of the line
+            fprintf(fp, "%2c", canvas[height - i][j]);
+        }
     }
 }
 

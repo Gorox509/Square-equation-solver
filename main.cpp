@@ -18,7 +18,7 @@ int main() {
 		   "\'s\': solve equation\n"
 		   "\'f\': test format from file with\n"
 		   "\'t\': test solver from file\n"
-		   "\'p\': plot graph\n"
+		   "\'p\': plot the equation\n"
 		   "Enter command: ");
 
 	while ((cmd = getchar()) != EOF) {
@@ -52,6 +52,10 @@ int main() {
 			break;
 
 		case 'p': {
+			char filename[MAX_STR_LEN] = "";
+			printf("Enter file to write to (nothing to write on screen): ");
+			fgets(filename, MAX_STR_LEN, stdin);
+			replace_newline_with_null_terminator(filename);
 			int plots_amount = 0, height = 0, width = 0;
 			printf("Enter amounts of plots: ");
 			scanf("%d", &plots_amount);
@@ -71,7 +75,14 @@ int main() {
 			double scale = NAN;
 			//printf("Enter scale (x symbols per 1x1 square): ");
 			//scanf("%lg", &scale);
-			plot(data, plots_amount, 0, height, width);
+			if (is_str_all_space(filename)) {
+				plot(stdout, data, plots_amount, 0, height, width);
+			}
+			else {
+				FILE * fp = fopen(filename, "w");
+				plot(fp, data, plots_amount, 0, height, width);
+				fclose(fp);
+			}
 			break;
 		}
 
@@ -304,5 +315,11 @@ int custom_isnan(double x) {
 		return 1;
 	return 0;
 }
-// todo plot in console
-// todo read about split files
+// todo plot in console - done
+// todo read about split files - done
+
+
+void replace_newline_with_null_terminator(char str[MAX_STR_LEN]) {
+	char * idx = strchr(str, '\n');
+	*idx = '\0';
+}

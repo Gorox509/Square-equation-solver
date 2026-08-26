@@ -15,5 +15,6 @@ int is_all_next_input_space();
 int double_is_zero(double x);
 int custom_isinf(double x);
 int custom_isnan(double x);
+void replace_newline_with_null_terminator(char str[MAX_STR_LEN]);
 
 #endif 
