@@ -4,12 +4,8 @@
 #include "plot.h"
 #include "testing.h"
 
-// сделать тесты - в процессе, макросы - есть
-// enum  это круто фр фр
 int main()
 {
-    int *p = NULL;
-    *p = 3; // гыыы сегфолт
     int cmd = 0;
 
     printf("Possible commands:\n"
