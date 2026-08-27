@@ -86,7 +86,7 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
     height += height % 2; // to even number due to ploting format reasons
     width += width % 2;
     
-    int canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH] = {0};
+    char canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH] = {0};
 
     PointInt current_position = {.x = -width / 2, .y = height / 2}; // x is to the right, y is upwards, starting in upper left position
 
@@ -94,7 +94,7 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
         for ( ; current_position.x < width / 2; ++current_position.x) {
             int symbol = ' ';
             symbol = pick_symbol_to_draw_for_plots(current_position, data, plots_amount, scale);
-            canvas[current_position.y + height / 2][current_position.x + width / 2] = symbol;
+            canvas[current_position.y + height / 2][current_position.x + width / 2] = (char) symbol;
         }
         current_position.x = -width / 2; // back to 0th index of canvas line 
         canvas[current_position.y + height / 2][width] = '\n';
@@ -103,7 +103,7 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
 }
 
 
-void print_canvas_to_file(FILE * fp, int height, int width, int canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH], double scale) {
+void print_canvas_to_file(FILE * fp, int height, int width, char canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH], double scale) {
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width + 1; ++j) { //width + 1 for \n symbol at the end of each line
             fprintf(fp, "%2c", canvas[height - i][j]);
