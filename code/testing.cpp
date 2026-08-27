@@ -116,6 +116,7 @@ int do_comparison_and_printing_of_wrong_tests(square_equation test_true, int cod
 
 int format_test_interactive_from_file() {
 	char filename[MAX_STR_LEN] = "";
+	int return_value = 0;
 
 	printf("Enter test file name: ");
 
@@ -134,7 +135,6 @@ int format_test_interactive_from_file() {
 
 	FILE * fp = fopen(".temp", "r");
 
-	int return_value = 0;
 	return_value = do_format_comparison_from_file(fp);
 	fclose(fp);
 	remove(".temp");
@@ -143,14 +143,12 @@ int format_test_interactive_from_file() {
 
 int do_format_comparison_from_file(FILE * fp) {
 	int n_tests = 0, n_failed_tests = 0, current_test_num = 0;
-	while (1) {
-		current_test_num++;
-		char correct_ans[MAX_STR_LEN] = "", ans[MAX_STR_LEN] = "";
 
-		if (fgets(correct_ans, MAX_STR_LEN, fp) == NULL || fgets(ans, MAX_STR_LEN, fp) == NULL) {
-			printf("Wrong Answers: %d/%d\n", n_failed_tests, n_tests);
-			return CORRECT;
-		}
+	char correct_ans[MAX_STR_LEN] = "", ans[MAX_STR_LEN] = "";
+
+	while (fgets(correct_ans, MAX_STR_LEN, fp) != NULL && fgets(ans, MAX_STR_LEN, fp) != NULL) {
+		current_test_num++;
+
 		n_tests++;
 		if (!strcmp(ans, correct_ans));
 		else {
@@ -158,14 +156,15 @@ int do_format_comparison_from_file(FILE * fp) {
 			printf("Wrong Answer on line %d.\nCorrect answer: %sYour answer: %s\n", current_test_num, correct_ans, ans);
 		}
 	}
-	return GENERAL_ERROR;
+	printf("Wrong Answers: %d/%d\n", n_failed_tests, n_tests);
+	return CORRECT;
 }
 
 
 int do_format_test_from_file(char filename[]) {
-
-	if (filename == NULL)
+	if (filename == NULL) {
 		return GENERAL_ERROR;
+	}
 
 	FILE * fp = fopen(filename, "r");
 
@@ -174,7 +173,7 @@ int do_format_test_from_file(char filename[]) {
 	}
 
 	FILE * tempp = fopen(".temp", "w+");
-	while (1) {
+	while (!feof(fp)) {
 		double a = NAN, b = NAN, c = NAN, x1 = NAN, x2 = NAN;
 
 		char correct_ans[MAX_STR_LEN] = "";
@@ -199,7 +198,9 @@ int do_format_test_from_file(char filename[]) {
 		fputs(correct_ans, tempp);
 		print_square_equation_sols_fp(tempp, x1, x2, n_sols);
 	}
-	return GENERAL_ERROR; // if leaves while loop
+	fclose(tempp);
+	fclose(fp);
+	return CORRECT;
 }
 
 
