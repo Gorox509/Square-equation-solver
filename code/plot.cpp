@@ -1,6 +1,9 @@
 #include "../headers/defines.h"
+
 #include "../headers/plot.h"
-#include "../headers/main.h"
+#include "../headers/testing.h"
+#include "../headers/solver.h"
+#include "../headers/util_funcs.h"
 
 int plot_interactive() {
     printf("Enter file to write to (nothing to write on screen): ");

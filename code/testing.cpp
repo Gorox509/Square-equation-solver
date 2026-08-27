@@ -1,6 +1,9 @@
 #include "../headers/defines.h"
+
+#include "../headers/plot.h"
 #include "../headers/testing.h"
-#include "../headers/main.h"
+#include "../headers/solver.h"
+#include "../headers/util_funcs.h"
 
 int test_solver_from_file(char filename[]) {
 	FILE * fp = fopen(filename, "r");
@@ -191,9 +194,3 @@ int do_format_test_from_file(char filename[]) {
 }
 
 
-int is_doubles_equal(double x, double y) {
-
-	if (fabs(x - y) < epsilon)
-		return TRUE;
-	return FALSE;
-}
