@@ -14,7 +14,11 @@ int plot_interactive() {
 
     printf("Enter amounts of plots: ");
     int plots_amount = 0, height = 0, width = 0;
-    scanf("%d", &plots_amount);
+    if (scanf("%d", &plots_amount) != 1) {
+        printf(RED "Error while reading plots amount" BASE_FMT ENDL);
+        clear_buffer();
+        return GENERAL_ERROR;
+    }
 
     if (isinf(plots_amount) or plots_amount <= 0) {
         printf("Wrong plots amount\n");
@@ -22,7 +26,11 @@ int plot_interactive() {
     }
 
     printf("Enter height & width of canvas (50x50 is recommended): ");
-    scanf("%d %d", &height, &width);
+    if (scanf("%d %d", &height, &width) != 2) {
+        printf(RED "Error while canvas parameters reading" BASE_FMT ENDL);
+        clear_buffer();
+        return GENERAL_ERROR;
+    }
 
     if (isinf(height) || isinf(width) || height <= 0 || width <= 0) {
         printf("Wrong canvas parameters\n");
@@ -79,17 +87,17 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
     width += width % 2;
     
     int canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH] = {0};
-    PointInt current = {.x = -width / 2, .y = height / 2}; // x is to the right, y is upwards, starting in upper left position
-    for ( ; current.y > -height / 2; --current.y) {
-        for ( ; current.x < width / 2; ++current.x) {
+
+    PointInt current_position = {.x = -width / 2, .y = height / 2}; // x is to the right, y is upwards, starting in upper left position
+
+    for ( ; current_position.y > -height / 2; --current_position.y) {
+        for ( ; current_position.x < width / 2; ++current_position.x) {
             int symbol = ' ';
-            symbol = pick_symbol_to_draw_for_plots(current, data, plots_amount, scale);
-            //printf("%2c", symbol);
-            canvas[current.y + height / 2][current.x + width / 2] = symbol;
+            symbol = pick_symbol_to_draw_for_plots(current_position, data, plots_amount, scale);
+            canvas[current_position.y + height / 2][current_position.x + width / 2] = symbol;
         }
-        current.x = -width / 2; // back to 0th index of canvas line 
-        canvas[current.y + height / 2][width] = '\n';
-        //printf(ENDL);
+        current_position.x = -width / 2; // back to 0th index of canvas line 
+        canvas[current_position.y + height / 2][width] = '\n';
     }
     print_canvas_to_file(fp, height, width, canvas, scale);
 }
@@ -104,21 +112,21 @@ void print_canvas_to_file(FILE * fp, int height, int width, int canvas[MAX_CANVA
 }
 
 
-int pick_symbol_to_draw_for_plots(PointInt current, square_equation data[], int plots_amount, double scale) {
+int pick_symbol_to_draw_for_plots(PointInt current_position, square_equation data[], int plots_amount, double scale) {
     int symbol = ' ';
     for (int i = 0; i < plots_amount; ++i) {
-        if (is_this_square_zero(current, scale)) {
+        if (is_this_square_zero(current_position, scale)) {
             symbol = '0';
             break;
             }
-        else if (is_parabola_in_this_square(data[i], current, scale)) {
+        else if (is_parabola_in_this_square(data[i], current_position, scale)) {
             symbol = '#';
             break;
             }
-        else if (is_this_square_on_x_axis(current, scale) && symbol == ' ') {
+        else if (is_this_square_on_x_axis(current_position, scale) && symbol == ' ') {
             symbol = '-';
             }
-        else if (is_this_square_on_y_axis(current, scale) && symbol == ' ') {
+        else if (is_this_square_on_y_axis(current_position, scale) && symbol == ' ') {
             symbol = '|';
         }
     }

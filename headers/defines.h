@@ -15,7 +15,7 @@
 
 
 const int MAX_STR_LEN = 100;
-const int MAX_BUF_LEN = 70;
+const int MAX_BUF_LEN = 300;
 const int MAX_ARRAY_LEN = 100;
 
 #define RED "\033[31m"

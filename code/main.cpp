@@ -42,6 +42,7 @@ int main() //TODO: argc argv
             if (scanf("%s", filename) != 1)
             {
                 printf(RED "Error during filename reading" BASE_FMT ENDL);
+                clear_buffer();
                 break;
             }
             test_solver_from_file(filename);

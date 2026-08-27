@@ -3,7 +3,10 @@
 int main() {
     int n_tests_do_create = 0, n_roots_needed = 0;
     printf("Enter number of tests to create: ");
-    scanf("%d", &n_tests_do_create);
+    if (scanf("%d", &n_tests_do_create) != 1) {
+        printf(RED "Error while reading amount of tests to create" BASE_FMT ENDL);
+        return GENERAL_ERROR;
+    }
 
     char filename[MAX_STR_LEN] = "";
     printf("Enter file name to add tests to: ");
@@ -13,7 +16,10 @@ int main() {
 	}
 
     printf("Enter amount of roots needed: ");
-    scanf("%d", &n_roots_needed);
+    if (scanf("%d", &n_roots_needed) != 1) {
+        printf(RED "Error while reading amount of roots" BASE_FMT ENDL);
+        return GENERAL_ERROR;
+    }
 
     FILE * fp = fopen(filename, "w+");
 

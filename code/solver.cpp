@@ -70,7 +70,7 @@ int print_square_equation_sols_stdout(double x1, double x2, int n_sol)
     return print_square_equation_sols_fp(stdout, x1, x2, n_sol);
 }
 
-int print_square_equation_sols_fp(FILE *fp, double x1, double x2, int n_sol)
+int print_square_equation_sols_fp(FILE * fp, double x1, double x2, int n_sol)
 {
     if (fp == NULL) {
         printf(RED "Error while file opening" BASE_FMT ENDL);

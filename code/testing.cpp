@@ -6,13 +6,14 @@
 #include "../headers/util_funcs.h"
 
 int test_solver_from_file(char filename[]) {
+	int return_value = 0;
 	FILE * fp = fopen(filename, "r");
 
 	if (fp == NULL) {
 		printf(RED "Error: no such file" BASE_FMT ENDL);
 		return GENERAL_ERROR;
 	}
-	int return_value = 0;
+
 	return_value = do_solver_tests(fp);
 	fclose(fp);
 	return return_value;
@@ -85,7 +86,7 @@ int do_reading_for_test_from_line(char line[], square_equation * test) {
 	}
 
 	if (err_flag == GENERAL_ERROR) {
-		printf("Error during reading\n");
+		printf(RED "Error during reading" BASE_FMT ENDL);
 		return GENERAL_ERROR;
 	}
 	return CORRECT;
@@ -120,13 +121,14 @@ int format_test_interactive_from_file() {
 
 	if (scanf("%s", filename) != 1) {
 		printf(RED "Error during filename reading" BASE_FMT ENDL);
+		clear_buffer();
 		return GENERAL_ERROR;
 	}
 
 	int test_err = do_format_test_from_file(filename);
 
 	if (test_err == GENERAL_ERROR) {
-		printf(RED "Error: no such file" BASE_FMT ENDL);
+		printf(RED "Error while reading file" BASE_FMT ENDL);
 		return GENERAL_ERROR;
 	}
 
@@ -183,14 +185,21 @@ int do_format_test_from_file(char filename[]) {
 			return CORRECT;
 		}
 
-		fscanf(fp, "%lg %lg %lg ", &a, &b, &c);
+		fscanf(fp, "%lg %lg %lg ", &a, &b, &c); // temporary
+		/*
+		if (fscanf(fp, "%lg %lg %lg ", &a, &b, &c) != 3) {
+			printf(RED "Error while coefs reading" BASE_FMT ENDL); // todo: bugged, needs fix
+			clear_buffer();
+			return GENERAL_ERROR;
+		}
+		*/
 		fgets(correct_ans, MAX_STR_LEN, fp);
 
 		int n_sols = square_equation_solve(a, b, c, &x1, &x2);
 		fputs(correct_ans, tempp);
 		print_square_equation_sols_fp(tempp, x1, x2, n_sols);
 	}
-	return GENERAL_ERROR;
+	return GENERAL_ERROR; // if leaves while loop
 }
 
 
