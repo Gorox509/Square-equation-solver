@@ -1,6 +1,6 @@
-#include "defines.h"
-#include "testing.h"
-#include "main.h"
+#include "../headers/defines.h"
+#include "../headers/testing.h"
+#include "../headers/main.h"
 
 int test_solver_from_file(char filename[]) {
 	FILE * fp = fopen(filename, "r");
@@ -9,8 +9,10 @@ int test_solver_from_file(char filename[]) {
 		printf(RED "Error: no such file" BASE_FMT ENDL);
 		return GENERAL_ERROR;
 	}
-
-	return do_solver_tests(fp);
+	int return_value = 0;
+	return_value = do_solver_tests(fp);
+	fclose(fp);
+	return return_value;
 }
 
 
@@ -20,13 +22,11 @@ int do_solver_tests(FILE * fp) {
 	//todo read from buffer not from file - done
 
 	int i = 0;
-	char lines[MAX_BUF_LEN][MAX_STR_LEN] = {};
-	while (fgets(line, MAX_STR_LEN, fp) != NULL) {
+	char lines[MAX_BUF_LEN][MAX_STR_LEN] = {0};
+	while (fgets(line, MAX_STR_LEN, fp) != NULL) { // reading all lines from file
 		strcpy(lines[i], line);
 		++i;
 	}
-	fclose(fp);
-
 
 	for (int j = 0; j < i; j++) {
 		int err = 0;
@@ -57,7 +57,7 @@ int do_solver_test(char line[]) {
 
 	code = square_equation_solve(test_true.a, test_true.b, test_true.c, &x1, &x2);
 
-	return do_comparison_and_print_of_wrong_tests(test_true, code, x1, x2);
+	return do_comparison_and_printing_of_wrong_tests(test_true, code, x1, x2);
 }
 
 
@@ -89,7 +89,7 @@ int do_reading_for_test_from_line(char line[], square_equation * test) {
 }
 
 
-int do_comparison_and_print_of_wrong_tests(square_equation test_true, int code, double x1, double x2) {
+int do_comparison_and_printing_of_wrong_tests(square_equation test_true, int code, double x1, double x2) {
 	if (code == test_true.roots_code) {
 		if (test_true.roots_code == TWO_ROOTS_CODE)
 			if ((is_doubles_equal(test_true.x1, x1) && is_doubles_equal(test_true.x2, x2)) || (is_doubles_equal(test_true.x1, x2) && is_doubles_equal(test_true.x2, x1)))
@@ -102,7 +102,10 @@ int do_comparison_and_print_of_wrong_tests(square_equation test_true, int code, 
 	}
 	printf("Test FAILED: a = %lg, b = %lg, c = %lg\n"
 	"Expected: x1: %10lf, x2: %10lf, roots code: %3d\n"
-	"Got:      x1: %10lf, x2: %10lf, roots code: %3d\n\n", test_true.a, test_true.b, test_true.c, test_true.x1, test_true.x2, test_true.roots_code, x1, x2, code);
+	"Got:      x1: %10lf, x2: %10lf, roots code: %3d\n\n", 
+	test_true.a, test_true.b, test_true.c, 
+	test_true.x1, test_true.x2, test_true.roots_code,
+	x1, 			 x2, 		   code);
 	return INCORRECT; //wrong
 }
 
@@ -126,26 +129,28 @@ int format_test_interactive_from_file() {
 
 	FILE * fp = fopen(".temp", "r");
 
-	return do_format_comparison_from_file(fp);
+	int return_value = 0;
+	return_value = do_format_comparison_from_file(fp);
+	fclose(fp);
+	remove(".temp");
+	return return_value;
 }
 
 int do_format_comparison_from_file(FILE * fp) {
-	int n_tests = 0, n_failed_tests = 0, i = 0;
+	int n_tests = 0, n_failed_tests = 0, current_test_num = 0;
 	while (1) {
-		i++;
+		current_test_num++;
 		char correct_ans[MAX_STR_LEN] = "", ans[MAX_STR_LEN] = "";
 
 		if (fgets(correct_ans, MAX_STR_LEN, fp) == NULL || fgets(ans, MAX_STR_LEN, fp) == NULL) {
 			printf("Wrong Answers: %d/%d\n", n_failed_tests, n_tests);
-			fclose(fp);
-			remove(".temp");
 			return CORRECT;
 		}
 		n_tests++;
 		if (!strcmp(ans, correct_ans));
 		else {
 			n_failed_tests++;
-			printf("Wrong Answer on line %d.\nCorrect answer: %sYour answer: %s\n", i, correct_ans, ans);
+			printf("Wrong Answer on line %d.\nCorrect answer: %sYour answer: %s\n", current_test_num, correct_ans, ans);
 		}
 	}
 	return GENERAL_ERROR;
@@ -169,7 +174,7 @@ int do_format_test_from_file(char filename[]) {
 
 		char correct_ans[MAX_STR_LEN] = "";
 
-		if (feof(fp)) {
+		if (feof(fp)) { // closing file when it ends
 			fclose(tempp);
 			fclose(fp);
 			return CORRECT;
@@ -180,7 +185,7 @@ int do_format_test_from_file(char filename[]) {
 
 		int n_sols = square_equation_solve(a, b, c, &x1, &x2);
 		fputs(correct_ans, tempp);
-		print_sq_eq_sols_fp(tempp, x1, x2, n_sols);
+		print_square_equation_sols_fp(tempp, x1, x2, n_sols);
 	}
 	return GENERAL_ERROR;
 }
@@ -189,6 +194,6 @@ int do_format_test_from_file(char filename[]) {
 int is_doubles_equal(double x, double y) {
 
 	if (fabs(x - y) < epsilon)
-		return 1;
-	return 0;
+		return TRUE;
+	return FALSE;
 }

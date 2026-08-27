@@ -1,12 +1,13 @@
-#include "defines.h"
+#include "../headers/defines.h"
 
-#include "main.h"
-#include "plot.h"
-#include "testing.h"
+#include "../headers/main.h"
+#include "../headers/plot.h"
+#include "../headers/testing.h"
 
-int main()
+
+int main() //TODO: argc argv
 {
-    int cmd = 0;
+    int cmd = 0; // command
 
     printf("Possible commands:\n"
            "\'q\': quit\n"
@@ -16,18 +17,18 @@ int main()
            "\'p\': plot the equation\n"
            "Enter command: ");
 
-    while ((cmd = getchar()) != EOF)
+    while ((cmd = getchar()) != EOF) // write next symbol
     {
-        if (isspace(cmd))
+        if (isspace(cmd)) //skip spaces before actual input
             continue;
 
-        if (!is_all_next_input_space())
-            cmd = 0;
-
+        if (!n_spaces_in_next_input()) //TODO: name - done
+            cmd = 0;                   // check if there's more characters after after first
+                                       // if true, default case happens
         switch (cmd)
         {
         case 'q':
-            return CORRECT;
+            return CORRECT; // quit
 
         case 'f':
             format_test_interactive_from_file();
@@ -47,46 +48,12 @@ int main()
         }
 
         case 's':
-            sq_eq_interactive();
+            square_equation_interactive();
             break;
 
-        case 'p':
+        case 'p': //TODO: to func() - done
         {
-            char filename[MAX_STR_LEN] = "";
-            printf("Enter file to write to (nothing to write on screen): ");
-            fgets(filename, MAX_STR_LEN, stdin);
-            replace_newline_with_null_terminator(filename);
-            int plots_amount = 0, height = 0, width = 0;
-            printf("Enter amounts of plots: ");
-            scanf("%d", &plots_amount);
-            if (isinf(plots_amount) or plots_amount <= 0)
-            {
-                printf("Wrong plots amount\n");
-                break;
-            }
-            printf("Enter height & width of canvas (50x50 is recommended): ");
-            scanf("%d %d", &height, &width);
-            if (isinf(height) || isinf(width) || height <= 0 || width <= 0)
-            {
-                printf("Wrong canvas parameters\n");
-                break;
-            }
-            square_equation data[MAX_ARRAY_LEN];
-            for (int i = 0; i < plots_amount; ++i)
-                input_compute_data_for_plot(&data[i]);
-            double scale = NAN;
-            // printf("Enter scale (x symbols per 1x1 square): ");
-            // scanf("%lg", &scale);
-            if (is_str_all_space(filename))
-            {
-                plot(stdout, data, plots_amount, 0, height, width);
-            }
-            else
-            {
-                FILE *fp = fopen(filename, "w");
-                plot(fp, data, plots_amount, 0, height, width);
-                fclose(fp);
-            }
+            plot_interactive();
             break;
         }
 
@@ -103,19 +70,18 @@ int main()
     return CORRECT;
 }
 
-int square_equation_solve(double a, double b, double c, double *x1, double *x2)
-{ // ax^2 + bx + c = 0
-
-    if (!isfinite(a) || !isfinite(b) || !isfinite(c) || x1 == NULL ||
-        x2 == NULL)
+int square_equation_solve(double a, double b, double c, double *x1, double *x2) { // ax^2 + bx + c = 0
+    if (!isfinite(a) || !isfinite(b) || !isfinite(c)) //TODO: error output - done
         return WRONG_COEFS_CODE;
+
+    if (x1 == NULL || x2 == NULL) 
+        return GENERAL_ERROR;
 
     *x1 = NAN;
     *x2 = NAN;
 
-    if (a < 0.)
-    {
-        a = fabs(a);
+    if (a < 0.) {
+        a = fabs(a); // a is always positive to prevent -0 return
         b *= -1.;
         c *= -1;
     }
@@ -123,31 +89,31 @@ int square_equation_solve(double a, double b, double c, double *x1, double *x2)
     if (double_is_zero(a))
         return linear_equation_solve(b, c, x1);
 
-    double D = b * b - 4 * a * c;
+    double Discriminant = b * b - 4 * a * c; //TODO: discriminant - done
 
-    if (D < 0)
+    if (Discriminant < 0)
         return NO_ROOTS_CODE;
 
-    else if (double_is_zero(D))
-    {
-        *x1 = (0 - b) / (2 * a);
+    else if (double_is_zero(Discriminant))
+    {                            // 0 - b to prevent unwanted -0 return, since if b is 0 (-b) is -0, and (0 - b) is 0
+        *x1 = (0 - b) / (2 * a); //TODO: comments - done
         return ONE_ROOT_CODE;
     }
 
     // todoimplement isinf() + isnan() - done
     else
     {
-        *x1 = (0 - b - sqrt(D)) / (2 * a);
-        *x2 = (0 - b + sqrt(D)) / (2 * a);
+        double Discriminant_sqrt = sqrt(Discriminant);
+        *x1 = (0 - b - Discriminant_sqrt) / (2 * a);
+        *x2 = (0 - b + Discriminant_sqrt) / (2 * a); //TODO: undublicate - done
         return TWO_ROOTS_CODE;
     }
 }
 
-int linear_equation_solve(double k, double b, double *x)
-{ // kx + b = 0
+int linear_equation_solve(double k, double b, double *x) { // kx + b = 0
     if (k < 0.)
     {
-        k = fabs(k);
+        k = fabs(k); // k is always positive to prevent -0 return
         b *= -1;
     }
 
@@ -160,22 +126,28 @@ int linear_equation_solve(double k, double b, double *x)
         return NO_ROOTS_CODE; // no solutions
     }
 
-    *x = (0 - b) / k;
+    *x = (0 - b) / k; // 0 - b to prevent unwanted -0 return, since if b is 0 (-b) is -0, and (0 - b) is 0
     return ONE_ROOT_CODE;
 }
 
-void print_sq_eq_sols_stdout(double x1, double x2, int n_sol)
+int print_square_equation_sols_stdout(double x1, double x2, int n_sol)
 {
-    print_sq_eq_sols_fp(stdout, x1, x2, n_sol);
+    return print_square_equation_sols_fp(stdout, x1, x2, n_sol);
 }
 
-void print_sq_eq_sols_fp(FILE *fp, double x1, double x2, int n_sol)
+int print_square_equation_sols_fp(FILE *fp, double x1, double x2, int n_sol)
 {
-    if (fp == NULL)
-        exit(0);
-
+    if (fp == NULL) {
+        printf(RED "Error while file opening" BASE_FMT ENDL);
+        return GENERAL_ERROR;
+    }
+        
     if (custom_isinf(x1) || custom_isinf(x2)) // can be NaN;
-        exit(0);
+    {
+        printf(RED "Error: infinite roots" BASE_FMT ENDL);
+        return GENERAL_ERROR;
+        //exit(0); // red flag - dealt with
+    }
 
     switch (n_sol)
     {
@@ -203,6 +175,7 @@ void print_sq_eq_sols_fp(FILE *fp, double x1, double x2, int n_sol)
         fprintf(fp, RED "Error" BASE_FMT ENDL);
         break;
     }
+    return CORRECT;
 }
 
 int input_square_coefs(double *a, double *b, double *c)
@@ -210,7 +183,7 @@ int input_square_coefs(double *a, double *b, double *c)
 
     printf("Enter coefs: ");
 
-    for (int attempts = 10; attempts > -1; --attempts)
+    for (int remaining_attempts = 10; remaining_attempts > -1; --remaining_attempts) 
     {
 
         if (scanf("%lg %lg %lg", a, b, c) == 3)
@@ -221,7 +194,7 @@ int input_square_coefs(double *a, double *b, double *c)
                 return CORRECT;
         }
 
-        if (attempts)
+        if (remaining_attempts)
             printf(RED "Wrong input format. Try again: " BASE_FMT);
 
         clear_buffer();
@@ -233,19 +206,19 @@ int input_square_coefs(double *a, double *b, double *c)
 int clear_buffer()
 {
 
-    int ch = 0, i = 0;
+    int ch = 0, n_cleared_chars = 0;
 
     while (ch != EOF && ch != '\n')
     {
         ch = getchar();
-        ++i;
+        ++n_cleared_chars;
     }
-    return i;
+    return n_cleared_chars;
 }
 
-int sq_eq_interactive()
+int square_equation_interactive()
 {
-    double a = NAN, b = NAN, c = NAN;
+    double a  = NAN, b  = NAN, c = NAN;
     double x1 = NAN, x2 = NAN;
     int n_sol = 0, input_err = 0;
 
@@ -258,7 +231,7 @@ int sq_eq_interactive()
 
     n_sol = square_equation_solve(a, b, c, &x1, &x2);
 
-    print_sq_eq_sols_stdout(x1, x2, n_sol);
+    print_square_equation_sols_stdout(x1, x2, n_sol);
 
     return CORRECT;
 }
@@ -266,48 +239,52 @@ int sq_eq_interactive()
 int is_str_all_space(char *str)
 {
     if (strlen(str) == 0)
-        return 1;
+        return TRUE;
 
-    int ch = str[0], i = 0, is = 1;
+    int ch = str[0], iter = 0, answer = 1;
 
     while (ch != '\0')
     {
         if (!isspace(ch))
-            is = 0;
-        ch = str[++i];
+            answer = 0;
+        ch = str[++iter];
     }
-    return is;
+    return answer;
 }
 
-void print_ascii_cat()
-{
+void print_ascii_cat() {
     printf(""
-           "     /\\__/\\ " ENDL "    /`    '\\ " ENDL "  === 0  0 === " ENDL
-           "    \\  --  / " ENDL "   /        \\ " ENDL "  /          \\ " ENDL
-           " |            | " ENDL "  \\  ||  ||  / " ENDL
+           "     /\\__/\\ " ENDL 
+           "    /`    '\\ " ENDL 
+           "  === 0  0 === " ENDL
+           "    \\  --  / " ENDL 
+           "   /        \\ " ENDL 
+           "  /          \\ " ENDL
+           " |            | " ENDL 
+           "  \\  ||  ||  / " ENDL
            "   \\_oo__oo_/#######o" ENDL);
 }
 
-int is_all_next_input_space()
+int n_spaces_in_next_input()
 {
-    int ch = 0, i = 0;
+    int ch = 0, n_non_space_symbols = 0;
 
     while (ch != EOF && ch != '\n')
     {
         ch = getchar();
         if (!isspace(ch))
-            ++i;
+            ++n_non_space_symbols;
     }
-    if (!i)
-        return 1;
-    return 0;
+    if (!n_non_space_symbols)
+        return TRUE;
+    return FALSE;
 }
 
 int double_is_zero(double x)
 {
     if (fabs(x) < epsilon)
-        return 1;
-    return 0;
+        return TRUE; //TODO: bool
+    return FALSE;
 }
 
 int custom_isinf(double x)
@@ -317,19 +294,19 @@ int custom_isinf(double x)
     unsigned char *p2 = p - 2;
 
     if ((*p1 == 0x7f || *p1 == 0xff) && *p2 == 0xf0)
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }
 
 int custom_isnan(double x)
 {
-    unsigned char *p = (unsigned char *)(&x + 1);
-    unsigned char *p1 = p - 1;
-    unsigned char *p2 = p - 2;
+    unsigned char *p = (unsigned char *)(&x + 1); // to the end of number
+    unsigned char *p1 = p - 1;                    // to the first byte
+    unsigned char *p2 = p - 2;                    // to the second byte
 
     if (*p1 == 0x7f && *p2 > 0xf0)
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }
 // todo plot in console - done
 // todo read about split files - done
@@ -339,3 +316,4 @@ void replace_newline_with_null_terminator(char str[MAX_STR_LEN])
     char *idx = strchr(str, '\n');
     *idx = '\0';
 }
+

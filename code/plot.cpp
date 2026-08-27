@@ -1,7 +1,48 @@
-#include "defines.h"
-#include "plot.h"
-#include "main.h"
+#include "../headers/defines.h"
+#include "../headers/plot.h"
+#include "../headers/main.h"
 
+int plot_interactive() {
+    printf("Enter file to write to (nothing to write on screen): ");
+    char filename[MAX_STR_LEN] = "";
+    fgets(filename, MAX_STR_LEN, stdin);
+
+    replace_newline_with_null_terminator(filename);
+
+    printf("Enter amounts of plots: ");
+    int plots_amount = 0, height = 0, width = 0;
+    scanf("%d", &plots_amount);
+
+    if (isinf(plots_amount) or plots_amount <= 0) {
+        printf("Wrong plots amount\n");
+        return GENERAL_ERROR;
+    }
+
+    printf("Enter height & width of canvas (50x50 is recommended): ");
+    scanf("%d %d", &height, &width);
+
+    if (isinf(height) || isinf(width) || height <= 0 || width <= 0) {
+        printf("Wrong canvas parameters\n");
+        return GENERAL_ERROR;
+    }
+
+    square_equation data[MAX_ARRAY_LEN]; // stores functions to plot
+    for (int i = 0; i < plots_amount; ++i)
+        input_compute_data_for_plot(&data[i]); // input and solve for every function
+
+    double scale = NAN;
+    // printf("Enter scale (x symbols per 1x1 square): ");
+    // scanf("%lg", &scale);
+    if (is_str_all_space(filename)) { // plot in console
+        plot(stdout, data, plots_amount, 0, height, width);
+
+    } else { // plot in file with given filename
+        FILE *fp = fopen(filename, "w");
+        plot(fp, data, plots_amount, 0, height, width);
+        fclose(fp);
+    }
+    return CORRECT;
+}
 
 int input_compute_data_for_plot(square_equation * data) {
     int input_err = input_square_coefs(&data->a, &data->b, &data->c);
@@ -31,10 +72,10 @@ int plot(FILE * fp, square_equation data[], int plots_amount, double scale, int 
 void plot_squares(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width) {
     //Point vertex = {0, 0};
     //get_parabola_vertex(data, &vertex);
-    height += height % 2;
+    height += height % 2; // to even number due to ploting format reasons
     width += width % 2;
     
-    int canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH];
+    int canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH] = {0};
     PointInt current = {.x = -width / 2, .y = height / 2}; // x is to the right, y is upwards, starting in upper left position
     for ( ; current.y > -height / 2; --current.y) {
         for ( ; current.x < width / 2; ++current.x) {
@@ -43,7 +84,7 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
             //printf("%2c", symbol);
             canvas[current.y + height / 2][current.x + width / 2] = symbol;
         }
-        current.x = -width / 2;
+        current.x = -width / 2; // back to 0th index of canvas line 
         canvas[current.y + height / 2][width] = '\n';
         //printf(ENDL);
     }
@@ -53,7 +94,7 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
 
 void print_canvas_to_file(FILE * fp, int height, int width, int canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH], double scale) {
     for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width + 1; ++j) { //width + 1 for \n symbol at the end of the line
+        for (int j = 0; j < width + 1; ++j) { //width + 1 for \n symbol at the end of each line
             fprintf(fp, "%2c", canvas[height - i][j]);
         }
     }
@@ -92,18 +133,24 @@ void get_parabola_vertex(square_equation data, Point * vertex) {
 
 
 int is_parabola_in_this_square(square_equation data, PointInt p, double scale) {
-    Point lu_angle = {p.x - 0.5, p.y - 0.5}, ld_angle = {p.x - 0.5, p.y + 0.5}, ru_angle = {p.x + 0.5, p.y - 0.5}, rd_angle = {p.x + 0.5, p.y + 0.5};
+    Point 
+    lu_angle = {p.x - 0.5, p.y - 0.5}, 
+    ld_angle = {p.x - 0.5, p.y + 0.5}, 
+    ru_angle = {p.x + 0.5, p.y - 0.5}, 
+    rd_angle = {p.x + 0.5, p.y + 0.5}; //TODO: code style - ?? ok
 
-    if (abs(is_parabola_lower_than_point(data, lu_angle) + is_parabola_lower_than_point(data, ld_angle)
-          + is_parabola_lower_than_point(data, ru_angle) + is_parabola_lower_than_point(data, rd_angle)) == 4) 
+    if (abs(  parabola_lower_or_higher_than_point(data, lu_angle)
+            + parabola_lower_or_higher_than_point(data, ld_angle)         // if continuous function doesn't cross that square, 
+            + parabola_lower_or_higher_than_point(data, ru_angle)         // all angles must be at the same side of it (lower or higher)
+            + parabola_lower_or_higher_than_point(data, rd_angle)) == 4)              
     {
-        return 0;   
+        return FALSE;   
     }
-    return 1;
+    return TRUE;
 }
 
 
-int is_parabola_lower_than_point(square_equation data, Point p) {
+int parabola_lower_or_higher_than_point(square_equation data, Point p) {
     double true_y = data.a * p.x*p.x + data.b * p.x + data.c;
     if (true_y < p.y)
         return 1;
@@ -111,21 +158,20 @@ int is_parabola_lower_than_point(square_equation data, Point p) {
 }
 
 
-
 int is_this_square_zero(PointInt p, double scale) {
     if (p.x == 0 and p.y == 0)
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }
 
 int is_this_square_on_x_axis(PointInt p, double scale) {
     if (p.y == 0)
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }
 
 int is_this_square_on_y_axis(PointInt p, double scale) {
     if (p.x == 0)
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }

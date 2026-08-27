@@ -36,6 +36,7 @@ WRONG_COEFS_CODE = -1,	  //|
 const int CORRECT = 1;
 const int INCORRECT = 0;
 
+
 const int GENERAL_ERROR = -13;	
 
 const double epsilon = 1e-6;
@@ -57,5 +58,18 @@ struct PointInt {
     int y;
 };
 
+
+#endif
+
+
+#ifndef TRUE
+
+#define TRUE 1
+
+#endif
+
+#ifndef FALSE
+
+#define FALSE 0
 
 #endif
