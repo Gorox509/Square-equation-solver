@@ -44,7 +44,7 @@ int plot_interactive() {
     double scale = NAN;
     // printf("Enter scale (x symbols per 1x1 square): ");
     // scanf("%lg", &scale);
-    if (is_str_all_space(filename)) { // plot in console
+    if (non_space_symbols_in_str(filename)) { // plot in console
         plot(stdout, data, plots_amount, 0, height, width);
 
     } else { // plot in file with given filename
@@ -143,7 +143,7 @@ void get_parabola_vertex(square_equation data, Point * vertex) {
 }
 
 
-int is_parabola_in_this_square(square_equation data, PointInt p, double scale) {
+bool is_parabola_in_this_square(square_equation data, PointInt p, double scale) {
     Point 
     lu_angle = {p.x - 0.5, p.y - 0.5}, 
     ld_angle = {p.x - 0.5, p.y + 0.5}, 
@@ -169,19 +169,19 @@ int parabola_lower_or_higher_than_point(square_equation data, Point p) {
 }
 
 
-int is_this_square_zero(PointInt p, double scale) {
+bool is_this_square_zero(PointInt p, double scale) {
     if (p.x == 0 and p.y == 0)
         return TRUE;
     return FALSE;
 }
 
-int is_this_square_on_x_axis(PointInt p, double scale) {
+bool is_this_square_on_x_axis(PointInt p, double scale) {
     if (p.y == 0)
         return TRUE;
     return FALSE;
 }
 
-int is_this_square_on_y_axis(PointInt p, double scale) {
+bool is_this_square_on_y_axis(PointInt p, double scale) {
     if (p.x == 0)
         return TRUE;
     return FALSE;

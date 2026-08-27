@@ -19,7 +19,7 @@ int clear_buffer()
 }
 
 
-int is_str_all_space(char *str)
+int non_space_symbols_in_str(char *str)
 {
     if (strlen(str) == 0)
         return TRUE;
@@ -63,14 +63,14 @@ int n_spaces_in_next_input()
     return FALSE;
 }
 
-int double_is_zero(double x)
+bool is_double_zero(double x)
 {
     if (fabs(x) < epsilon)
         return TRUE; //TODO: bool
     return FALSE;
 }
 
-int custom_isinf(double x)
+bool custom_isinf(double x)
 {
     unsigned char *p = (unsigned char *)(&x + 1);
     unsigned char *p1 = p - 1;
@@ -81,7 +81,7 @@ int custom_isinf(double x)
     return FALSE;
 }
 
-int custom_isnan(double x)
+bool custom_isnan(double x)
 {
     unsigned char *p = (unsigned char *)(&x + 1); // to the end of number
     unsigned char *p1 = p - 1;                    // to the first byte
@@ -100,7 +100,7 @@ void replace_newline_with_null_terminator(char str[MAX_STR_LEN])
     *idx = '\0';
 }
 
-int is_doubles_equal(double x, double y) {
+bool is_doubles_equal(double x, double y) {
 
 	if (fabs(x - y) < epsilon)
 		return TRUE;

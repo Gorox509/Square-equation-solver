@@ -184,7 +184,6 @@ int do_format_test_from_file_to_buf(char filename[MAX_STR_LEN], char buf_program
 		return GENERAL_ERROR;
 	}
 
-	
 	int i = 0;
 
 	while (!feof(fp)) {

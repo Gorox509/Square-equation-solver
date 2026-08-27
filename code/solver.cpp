@@ -18,13 +18,8 @@ int square_equation_solve(double a, double b, double c, double *x1, double *x2) 
     *x1 = NAN;
     *x2 = NAN;
 
-    if (a < 0.) {
-        a = fabs(a); // a is always positive to prevent -0 return
-        b *= -1.;
-        c *= -1;
-    }
 
-    if (double_is_zero(a))
+    if (is_double_zero(a))
         return linear_equation_solve(b, c, x1);
 
     double Discriminant = b * b - 4 * a * c; //TODO: discriminant - done
@@ -32,9 +27,9 @@ int square_equation_solve(double a, double b, double c, double *x1, double *x2) 
     if (Discriminant < 0)
         return NO_ROOTS_CODE;
 
-    else if (double_is_zero(Discriminant))
-    {                            // 0 - b to prevent unwanted -0 return, since if b is 0 (-b) is -0, and (0 - b) is 0
-        *x1 = (0 - b) / (2 * a); //TODO: comments - done
+    else if (is_double_zero(Discriminant))
+    {
+        *x1 = -b / (2 * a); //TODO: comments - done
         return ONE_ROOT_CODE;
     }
 
@@ -42,29 +37,24 @@ int square_equation_solve(double a, double b, double c, double *x1, double *x2) 
     else
     {
         double Discriminant_sqrt = sqrt(Discriminant);
-        *x1 = (0 - b - Discriminant_sqrt) / (2 * a);
-        *x2 = (0 - b + Discriminant_sqrt) / (2 * a); //TODO: undublicate - done
+        *x1 = (-b - Discriminant_sqrt) / (2 * a);
+        *x2 = (-b + Discriminant_sqrt) / (2 * a); //TODO: undublicate - done
         return TWO_ROOTS_CODE;
     }
 }
 
 int linear_equation_solve(double k, double b, double *x) { // kx + b = 0
-    if (k < 0.)
-    {
-        k = fabs(k); // k is always positive to prevent -0 return
-        b *= -1;
-    }
 
-    if (double_is_zero(k))
+    if (is_double_zero(k))
     {
-        if (double_is_zero(b))
+        if (is_double_zero(b))
         {
             return ANY_NUM_CODE; // any number
         }
         return NO_ROOTS_CODE; // no solutions
     }
 
-    *x = (0 - b) / k; // 0 - b to prevent unwanted -0 return, since if b is 0 (-b) is -0, and (0 - b) is 0
+    *x = -b / k;
     return ONE_ROOT_CODE;
 }
 
@@ -93,6 +83,11 @@ int print_square_equation_sols_to_str(char str[], double x1, double x2, int n_so
         printf(RED "Error: infinite roots" BASE_FMT ENDL);
         return GENERAL_ERROR;
     }
+    if (!custom_isnan(x1) && is_double_zero(x1))
+        x1 = 0;
+    
+    if (!custom_isnan(x2) && is_double_zero(x2))
+        x2 = 0;
 
     switch (n_sol)
     {
@@ -135,7 +130,7 @@ int input_square_coefs(double *a, double *b, double *c)
         {
             char next[MAX_STR_LEN] = "";
             fgets(next, MAX_STR_LEN, stdin);
-            if (strlen(next) == 0 || is_str_all_space(next))
+            if (strlen(next) == 0 || non_space_symbols_in_str(next))
                 return CORRECT;
         }
 

@@ -3,14 +3,14 @@
 #define UTIL_FUNCS_H
 
 int clear_buffer();
-int is_str_all_space(char * str);
+int non_space_symbols_in_str(char * str);
 void print_ascii_cat();
 int n_spaces_in_next_input();
-int double_is_zero(double x);
-int custom_isinf(double x);
-int custom_isnan(double x);
+bool is_double_zero(double x);
+bool custom_isinf(double x);
+bool custom_isnan(double x);
 void replace_newline_with_null_terminator(char str[MAX_STR_LEN]);
-int is_doubles_equal(double x, double y);
+bool is_doubles_equal(double x, double y);
 int custom_sgets(char str_dest[MAX_STR_LEN], char str_source[MAX_STR_LEN]);
 
 #endif
