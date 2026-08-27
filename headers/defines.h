@@ -26,18 +26,18 @@ const int MAX_ARRAY_LEN = 100;
 #define ENDL "\n"
 //---------------------------
 enum escape_codes {       //|
-ANY_NUM_CODE = -3,		  //|
-TWO_ROOTS_CODE = -15,	  //| // todo real enum - done
-ONE_ROOT_CODE = 9,	      //|
-NO_ROOTS_CODE = -30,	  //|
-WRONG_COEFS_CODE = -1,	  //|
+ANY_NUM_CODE = -1,		  //|
+TWO_ROOTS_CODE = 2,	      //| // todo real enum - done
+ONE_ROOT_CODE = 1,	      //|
+NO_ROOTS_CODE = 0,	      //|
+WRONG_COEFS_CODE = -2,	  //|
 };						  //|
 //---------------------------
 const int CORRECT = 1;
 const int INCORRECT = 0;
 
 
-const int GENERAL_ERROR = -13;	
+const int GENERAL_ERROR = -3;	
 
 const double epsilon = 1e-6;
 

@@ -1,4 +1,7 @@
+#include "../headers/defines.h"
+
 #include "../headers/create_random_tests.h"
+
 
 int main() {
     int n_tests_do_create = 0, n_roots_needed = 0;

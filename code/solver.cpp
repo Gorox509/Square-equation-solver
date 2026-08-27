@@ -10,6 +10,9 @@ int square_equation_solve(double a, double b, double c, double *x1, double *x2) 
         return WRONG_COEFS_CODE;
 
     if (x1 == NULL || x2 == NULL) 
+        return GENERAL_ERROR; // todo check if x1 == x2 - done
+
+    if (x1 == x2)
         return GENERAL_ERROR;
 
     *x1 = NAN;
@@ -67,48 +70,55 @@ int linear_equation_solve(double k, double b, double *x) { // kx + b = 0
 
 int print_square_equation_sols_stdout(double x1, double x2, int n_sol)
 {
-    return print_square_equation_sols_fp(stdout, x1, x2, n_sol);
+    return print_square_equation_sols_to_file(stdout, x1, x2, n_sol);
 }
 
-int print_square_equation_sols_fp(FILE * fp, double x1, double x2, int n_sol)
+int print_square_equation_sols_to_file(FILE * fp, double x1, double x2, int n_sol)
 {
     if (fp == NULL) {
         printf(RED "Error while file opening" BASE_FMT ENDL);
         return GENERAL_ERROR;
     }
-        
+    char output_str[MAX_STR_LEN] = "";
+    int return_value = 0;
+
+    return_value = print_square_equation_sols_to_str(output_str, x1, x2, n_sol);
+    fprintf(fp, "%s", output_str);
+    return return_value;
+}
+
+int print_square_equation_sols_to_str(char str[], double x1, double x2, int n_sol) {
     if (custom_isinf(x1) || custom_isinf(x2)) // can be NaN;
     {
         printf(RED "Error: infinite roots" BASE_FMT ENDL);
         return GENERAL_ERROR;
-        //exit(0); // red flag - dealt with
     }
 
     switch (n_sol)
     {
     case NO_ROOTS_CODE:
-        fprintf(fp, YELLOW "No solutions" BASE_FMT ENDL);
+        sprintf(str, YELLOW "No solutions" BASE_FMT ENDL);
         break;
 
     case ONE_ROOT_CODE:
-        fprintf(fp, YELLOW "Solution: %lg" BASE_FMT ENDL, x1);
+        sprintf(str, YELLOW "Solution: %lg" BASE_FMT ENDL, x1);
         break;
 
     case TWO_ROOTS_CODE:
-        fprintf(fp, GREEN "Solutions: %lg %lg" BASE_FMT ENDL, x1, x2);
+        sprintf(str, GREEN "Solutions: %lg %lg" BASE_FMT ENDL, x1, x2);
         break;
 
     case ANY_NUM_CODE:
-        fprintf(fp, YELLOW "Any number" BASE_FMT ENDL);
+        sprintf(str, YELLOW "Any number" BASE_FMT ENDL);
         break;
 
     case WRONG_COEFS_CODE:
-        fprintf(fp, RED "Error: invalid coefficients" BASE_FMT ENDL);
+        sprintf(str, RED "Error: invalid coefficients" BASE_FMT ENDL);
         break;
 
     default:
-        fprintf(fp, RED "Error" BASE_FMT ENDL);
-        break;
+        sprintf(str, RED "Error" BASE_FMT ENDL);
+        return INCORRECT;
     }
     return CORRECT;
 }

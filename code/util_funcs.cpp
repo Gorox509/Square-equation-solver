@@ -106,3 +106,16 @@ int is_doubles_equal(double x, double y) {
 		return TRUE;
 	return FALSE;
 }
+
+
+int custom_sgets(char str_dest[MAX_STR_LEN], char str_source[MAX_STR_LEN]) { // NOT reads \n at the end
+	int iter = 0;
+	char ch = str_source[0];
+
+	while (ch != '\n' && iter < MAX_STR_LEN) {
+		str_dest[iter] = ch;
+		ch = str_source[iter];
+		++iter;
+	}
+	return iter;
+}

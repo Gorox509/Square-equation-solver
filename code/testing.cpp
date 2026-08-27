@@ -13,29 +13,34 @@ int test_solver_from_file(char filename[]) {
 		printf(RED "Error: no such file" BASE_FMT ENDL);
 		return GENERAL_ERROR;
 	}
-
-	return_value = do_solver_tests(fp);
+	char buf[MAX_BUF_LEN][MAX_STR_LEN] = {0};
+	int n_lines = copy_test_file_to_buf(buf, fp);
 	fclose(fp);
+	return_value = do_solver_tests(buf, n_lines);
 	return return_value;
 }
 
-
-int do_solver_tests(FILE * fp) {
-	int n_tests = 0, n_wrong_tests = 0;
+int copy_test_file_to_buf(char buf[MAX_BUF_LEN][MAX_STR_LEN], FILE * fp) {
 	char line[MAX_STR_LEN] = "";
 	//todo read from buffer not from file - done
 
 	int i = 0;
-	char lines[MAX_BUF_LEN][MAX_STR_LEN] = {0};
 	while (fgets(line, MAX_STR_LEN, fp) != NULL) { // reading all lines from file
-		strcpy(lines[i], line);
+		strcpy(buf[i], line);
 		++i;
 	}
+	return i; // returns amount of copied lines
+}
 
-	for (int j = 0; j < i; j++) {
+
+int do_solver_tests(char buf[MAX_BUF_LEN][MAX_STR_LEN], int n_lines) {
+	int n_tests = 0, n_wrong_tests = 0;
+
+
+	for (int j = 0; j < n_lines; j++) {
 		int err = 0;
 
-		err = do_solver_test(lines[j]);
+		err = do_solver_test(buf[j]);
 	
 		if (err == GENERAL_ERROR) {
 			return GENERAL_ERROR;
@@ -126,34 +131,41 @@ int format_test_interactive_from_file() {
 		return GENERAL_ERROR;
 	}
 
-	int test_err = do_format_test_from_file(filename);
+	char buf_program[MAX_BUF_LEN][MAX_STR_LEN] = {0};
+	char buf_true[MAX_BUF_LEN][MAX_STR_LEN] = {0};
+
+	int test_err = do_format_test_from_file_to_buf(filename, buf_program, buf_true);
 
 	if (test_err == GENERAL_ERROR) {
 		printf(RED "Error while reading file" BASE_FMT ENDL);
 		return GENERAL_ERROR;
 	}
 
-	FILE * fp = fopen(".temp", "r");
+	int buf_len = test_err;
 
-	return_value = do_format_comparison_from_file(fp);
-	fclose(fp);
-	remove(".temp");
+	return_value = do_format_comparison_from_buf(buf_len, buf_program, buf_true);
+
 	return return_value;
 }
 
-int do_format_comparison_from_file(FILE * fp) {
+int do_format_comparison_from_buf(int buf_len, char buf_program[MAX_BUF_LEN][MAX_STR_LEN], char buf_true[MAX_BUF_LEN][MAX_STR_LEN]) {
 	int n_tests = 0, n_failed_tests = 0, current_test_num = 0;
 
-	char correct_ans[MAX_STR_LEN] = "", ans[MAX_STR_LEN] = "";
+	
+	
+	for (int i = 0; i < buf_len; ++i) {
+		char correct_ans[MAX_STR_LEN] = "", ans[MAX_STR_LEN] = "";
 
-	while (fgets(correct_ans, MAX_STR_LEN, fp) != NULL && fgets(ans, MAX_STR_LEN, fp) != NULL) {
+		custom_sgets(ans, buf_program[i]);
+		custom_sgets(correct_ans, buf_true[i]);
+
 		current_test_num++;
 
 		n_tests++;
 		if (!strcmp(ans, correct_ans));
 		else {
 			n_failed_tests++;
-			printf("Wrong Answer on line %d.\nCorrect answer: %sYour answer: %s\n", current_test_num, correct_ans, ans);
+			printf("Wrong Answer on line %d.\nCorrect answer: %s\nYour answer: %s\n\n", current_test_num, correct_ans, ans);
 		}
 	}
 	printf("Wrong Answers: %d/%d\n", n_failed_tests, n_tests);
@@ -161,7 +173,7 @@ int do_format_comparison_from_file(FILE * fp) {
 }
 
 
-int do_format_test_from_file(char filename[]) {
+int do_format_test_from_file_to_buf(char filename[MAX_STR_LEN], char buf_program[MAX_BUF_LEN][MAX_STR_LEN], char buf_true[MAX_BUF_LEN][MAX_STR_LEN]) {
 	if (filename == NULL) {
 		return GENERAL_ERROR;
 	}
@@ -172,29 +184,31 @@ int do_format_test_from_file(char filename[]) {
 		return GENERAL_ERROR;
 	}
 
-	FILE * tempp = fopen(".temp", "w+");
+	
+	int i = 0;
+
 	while (!feof(fp)) {
 		double a = NAN, b = NAN, c = NAN, x1 = NAN, x2 = NAN;
 
 		char correct_ans[MAX_STR_LEN] = "";
+		char program_ans[MAX_STR_LEN] = "";
 
 		fscanf(fp, "%lg %lg %lg ", &a, &b, &c); // temporary
-		/*
-		if (fscanf(fp, "%lg %lg %lg ", &a, &b, &c) != 3) {
-			printf(RED "Error while coefs reading" BASE_FMT ENDL); // todo: bugged, needs fix
-			clear_buffer();
-			return GENERAL_ERROR;
-		}
-		*/
 		fgets(correct_ans, MAX_STR_LEN, fp);
 
 		int n_sols = square_equation_solve(a, b, c, &x1, &x2);
-		fputs(correct_ans, tempp);
-		print_square_equation_sols_fp(tempp, x1, x2, n_sols);
+		print_square_equation_sols_to_str(program_ans, x1, x2, n_sols);
+
+		if (i >= MAX_BUF_LEN) {
+			printf(RED "Error: file is too long" BASE_FMT ENDL);
+			return GENERAL_ERROR;
+		}
+
+		strcat(buf_program[i], program_ans);
+		strcat(buf_true[i], correct_ans);
+
+		++i;
 	}
-	fclose(tempp);
 	fclose(fp);
-	return CORRECT;
+	return i;
 }
-
-

@@ -13,7 +13,7 @@ int main() //TODO: argc argv
     printf("Possible commands:\n"
            "\'q\': quit\n"
            "\'s\': solve equation\n"
-           "\'f\': test format from file with\n"
+           "\'f\': test format from file\n"
            "\'t\': test solver from file\n"
            "\'p\': plot the equation\n"
            "Enter command: ");

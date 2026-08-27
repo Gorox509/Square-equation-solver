@@ -11,5 +11,6 @@ int custom_isinf(double x);
 int custom_isnan(double x);
 void replace_newline_with_null_terminator(char str[MAX_STR_LEN]);
 int is_doubles_equal(double x, double y);
+int custom_sgets(char str_dest[MAX_STR_LEN], char str_source[MAX_STR_LEN]);
 
 #endif
