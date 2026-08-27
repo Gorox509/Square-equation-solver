@@ -6,7 +6,7 @@
 #include "../headers/util_funcs.h"
 
 int square_equation_solve(double a, double b, double c, double *x1, double *x2) { // ax^2 + bx + c = 0
-    if (!isfinite(a) || !isfinite(b) || !isfinite(c)) //TODO: error output - done
+    if (!custom_isfinite(a) || !custom_isfinite(b) || !custom_isfinite(c)) //TODO: error output - done
         return WRONG_COEFS_CODE;
 
     if (x1 == NULL || x2 == NULL) 

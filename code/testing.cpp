@@ -13,14 +13,19 @@ int test_solver_from_file(char filename[]) {
 		printf(RED "Error: no such file" BASE_FMT ENDL);
 		return GENERAL_ERROR;
 	}
-	char buf[MAX_BUF_LEN][MAX_STR_LEN] = {0};
+	char * buf[MAX_BUF_LEN] = {0};
+	for (int i = 0; i < MAX_BUF_LEN; ++i) {
+		buf[i] = (char *) calloc(MAX_STR_LEN, sizeof(char));
+	}
+
 	int n_lines = copy_test_file_to_buf(buf, fp);
 	fclose(fp);
 	return_value = do_solver_tests(buf, n_lines);
+	
 	return return_value;
 }
 
-int copy_test_file_to_buf(char buf[MAX_BUF_LEN][MAX_STR_LEN], FILE * fp) {
+int copy_test_file_to_buf(char * buf[MAX_BUF_LEN], FILE * fp) {
 	char line[MAX_STR_LEN] = "";
 	//todo read from buffer not from file - done
 
@@ -33,7 +38,7 @@ int copy_test_file_to_buf(char buf[MAX_BUF_LEN][MAX_STR_LEN], FILE * fp) {
 }
 
 
-int do_solver_tests(char buf[MAX_BUF_LEN][MAX_STR_LEN], int n_lines) {
+int do_solver_tests(char * buf[MAX_BUF_LEN], int n_lines) {
 	int n_tests = 0, n_wrong_tests = 0;
 
 
@@ -131,8 +136,15 @@ int format_test_interactive_from_file() {
 		return GENERAL_ERROR;
 	}
 
-	char buf_program[MAX_BUF_LEN][MAX_STR_LEN] = {0};
-	char buf_true[MAX_BUF_LEN][MAX_STR_LEN] = {0};
+	char * buf_program[MAX_BUF_LEN] = {0};
+	char * buf_true[MAX_BUF_LEN] = {0};
+
+	for (int i = 0; i < MAX_BUF_LEN; ++i) {
+		buf_program[i] = (char *) calloc(MAX_STR_LEN, sizeof(char));
+	}
+	for (int i = 0; i < MAX_BUF_LEN; ++i) {
+		buf_true[i] = (char *) calloc(MAX_STR_LEN, sizeof(char));
+	}
 
 	int test_err = do_format_test_from_file_to_buf(filename, buf_program, buf_true);
 
@@ -148,7 +160,7 @@ int format_test_interactive_from_file() {
 	return return_value;
 }
 
-int do_format_comparison_from_buf(int buf_len, char buf_program[MAX_BUF_LEN][MAX_STR_LEN], char buf_true[MAX_BUF_LEN][MAX_STR_LEN]) {
+int do_format_comparison_from_buf(int buf_len, char * buf_program[MAX_BUF_LEN], char * buf_true[MAX_BUF_LEN]) {
 	int n_tests = 0, n_failed_tests = 0, current_test_num = 0;
 
 	
@@ -173,7 +185,7 @@ int do_format_comparison_from_buf(int buf_len, char buf_program[MAX_BUF_LEN][MAX
 }
 
 
-int do_format_test_from_file_to_buf(char filename[MAX_STR_LEN], char buf_program[MAX_BUF_LEN][MAX_STR_LEN], char buf_true[MAX_BUF_LEN][MAX_STR_LEN]) {
+int do_format_test_from_file_to_buf(char filename[MAX_STR_LEN], char * buf_program[MAX_BUF_LEN], char * buf_true[MAX_BUF_LEN]) {
 	if (filename == NULL) {
 		return GENERAL_ERROR;
 	}
@@ -202,10 +214,8 @@ int do_format_test_from_file_to_buf(char filename[MAX_STR_LEN], char buf_program
 			printf(RED "Error: file is too long" BASE_FMT ENDL);
 			return GENERAL_ERROR;
 		}
-
 		strcat(buf_program[i], program_ans);
 		strcat(buf_true[i], correct_ans);
-
 		++i;
 	}
 	fclose(fp);

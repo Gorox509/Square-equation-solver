@@ -91,6 +91,12 @@ bool custom_isnan(double x)
         return TRUE;
     return FALSE;
 }
+
+bool custom_isfinite(double x) {
+    if (custom_isinf(x) || custom_isnan(x))
+        return FALSE;
+    return TRUE;
+}
 // todo plot in console - done
 // todo read about split files - done
 
@@ -108,13 +114,13 @@ bool is_doubles_equal(double x, double y) {
 }
 
 
-int custom_sgets(char str_dest[MAX_STR_LEN], char str_source[MAX_STR_LEN]) { // NOT reads \n at the end
+int custom_sgets(char str_dest[MAX_STR_LEN], char str_source[MAX_STR_LEN]) { // reads \n at the end
 	int iter = 0;
-	char ch = str_source[0];
+	char ch = 0;
 
 	while (ch != '\n' && iter < MAX_STR_LEN) {
-		str_dest[iter] = ch;
 		ch = str_source[iter];
+        str_dest[iter] = ch;
 		++iter;
 	}
 	return iter;
