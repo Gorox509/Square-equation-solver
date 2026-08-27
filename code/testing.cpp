@@ -178,12 +178,6 @@ int do_format_test_from_file(char filename[]) {
 
 		char correct_ans[MAX_STR_LEN] = "";
 
-		if (feof(fp)) { // closing file when it ends
-			fclose(tempp);
-			fclose(fp);
-			return CORRECT;
-		}
-
 		fscanf(fp, "%lg %lg %lg ", &a, &b, &c); // temporary
 		/*
 		if (fscanf(fp, "%lg %lg %lg ", &a, &b, &c) != 3) {
