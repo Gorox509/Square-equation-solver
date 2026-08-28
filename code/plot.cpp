@@ -1,3 +1,10 @@
+/**
+ * \file
+ * 
+ * \brief File containing functions for plotting given second term polynomials
+ */
+
+
 #include "../headers/defines.h"
 
 #include "../headers/plot.h"
@@ -5,6 +12,23 @@
 #include "../headers/solver.h"
 #include "../headers/util_funcs.h"
 
+
+/**
+ * \defgroup Plotting Functions to plot parabolas
+ * \brief Functions to plot 2-term polynomial in console or in file
+ */
+
+
+/**
+ * \ingroup UserInterface
+ * 
+ * \brief Function that interacts with user and acknowledge information for plot
+ * 
+ * Asks for place to draw (file name or in console), amount of polynomials, canvas parameters, 
+ * computes needed information and passes it to drawer functions.
+ * 
+ * \return Global constant code of success or error in function
+ */
 int plot_interactive() {
     printf("Enter file to write to (nothing to write on screen): ");
     char filename[MAX_STR_LEN] = "";
@@ -44,7 +68,7 @@ int plot_interactive() {
     double scale = NAN;
     // printf("Enter scale (x symbols per 1x1 square): ");
     // scanf("%lg", &scale);
-    if (non_space_symbols_in_str(filename)) { // plot in console
+    if (is_str_all_space(filename)) { // plot in console
         plot(stdout, data, plots_amount, 0, height, width);
 
     } else { // plot in file with given filename
@@ -55,6 +79,16 @@ int plot_interactive() {
     return CORRECT;
 }
 
+
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that interacts inputs and computes needed for plots data
+ * 
+ * \param [in, out] data pointer to square equation structure that's being read and written to
+ * 
+ * \return Global constant code of success or error in function
+ */
 int input_compute_data_for_plot(square_equation * data) {
     int input_err = input_square_coefs(&data->a, &data->b, &data->c);
 
@@ -66,6 +100,23 @@ int input_compute_data_for_plot(square_equation * data) {
     return CORRECT;
 }
 
+
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that requests plotting the equations
+ * 
+ * File pointer is checked to be valid. If check fails, code of incorrect run is returned.
+ * 
+ * \param [out] fp pointer to file stream in which plot is printed
+ * \param data array of square equation structures containing information to plot them
+ * \param plots_amount amount of plots requested to draw
+ * \param scale scale in which plot should be drawn
+ * \param height height of canvas
+ * \param width width of canvas
+ * 
+ * \return Global constant code of success or error in function
+ */
 int plot(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width) {
     if (isinf(scale) || height >= MAX_CANVAS_HEIGHT || width >= MAX_CANVAS_WIDTH) {
         printf(RED "Error: invalid scale" BASE_FMT ENDL);
@@ -80,14 +131,34 @@ int plot(FILE * fp, square_equation data[], int plots_amount, double scale, int 
 }
 
 
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that prints symbols in buffer and requests printing of it
+ * 
+ * File pointer have be valid.
+ * 
+ * \param [out] fp pointer to file stream in which plot is printed
+ * \param data array of square equation structures containing information to plot them
+ * \param plots_amount amount of plots requested to draw
+ * \param scale scale in which plot should be drawn
+ * \param height height of canvas
+ * \param width width of canvas
+ */
 void plot_squares(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width) {
+
+    assert(fp != NULL);
+
     //Point vertex = {0, 0};
     //get_parabola_vertex(data, &vertex);
     height += height % 2; // to even number due to ploting format reasons
     width += width % 2;
     
-    char canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH] = {0};
-
+    char * canvas[MAX_CANVAS_HEIGHT] = {0};
+	for (int i = 0; i < MAX_CANVAS_HEIGHT; ++i) {
+		canvas[i] = (char *) calloc(MAX_CANVAS_WIDTH, sizeof(char));
+	}
+    
     PointInt current_position = {.x = -width / 2, .y = height / 2}; // x is to the right, y is upwards, starting in upper left position
 
     for ( ; current_position.y > -height / 2; --current_position.y) {
@@ -100,10 +171,30 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
         canvas[current_position.y + height / 2][width] = '\n';
     }
     print_canvas_to_file(fp, height, width, canvas, scale);
+
+    for (int i = 0; i < MAX_CANVAS_HEIGHT; ++i) {
+		free(canvas[i]);
+	}
 }
 
 
-void print_canvas_to_file(FILE * fp, int height, int width, char canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH], double scale) {
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that prints canvas from buffer to file
+ * 
+ * File pointer is checked to be valid. If check fails, code of incorrect run is returned.
+ * 
+ * \param [out] fp pointer to file stream in which plot is printed
+ * \param [out] canvas buffer, two-dimensional array of characters that contains symbols for drawing
+ * \param scale scale in which plot should be drawn
+ * \param height height of canvas
+ * \param width width of canvas
+ */
+void print_canvas_to_file(FILE * fp, int height, int width, char * canvas[MAX_CANVAS_HEIGHT], double scale) {
+
+    assert(fp != NULL);
+
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width + 1; ++j) { //width + 1 for \n symbol at the end of each line
             fprintf(fp, "%2c", canvas[height - i][j]);
@@ -112,6 +203,18 @@ void print_canvas_to_file(FILE * fp, int height, int width, char canvas[MAX_CANV
 }
 
 
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that picks symbol to draw considering current position
+ * 
+ * \param [in, out] current_position integer point structure containing current position to put symbol in
+ * \param data array of square equation structures containing information to plot them
+ * \param plots_amount amount of plots requested to draw
+ * \param scale scale in which plot should be drawn
+ * 
+ * \return symbol picked to draw
+ */
 int pick_symbol_to_draw_for_plots(PointInt current_position, square_equation data[], int plots_amount, double scale) {
     int symbol = ' ';
     for (int i = 0; i < plots_amount; ++i) {
@@ -134,6 +237,14 @@ int pick_symbol_to_draw_for_plots(PointInt current_position, square_equation dat
 }
 
 
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that puts coordinates of parabola vertex in point structure
+ * 
+ * \param data array of square equation structures containing information to plot them
+ * \param [out] vertex point structure in which coordinates of parabola vertex are put into
+ */
 void get_parabola_vertex(square_equation data, Point * vertex) {
     if (data.roots_code != TWO_ROOTS_CODE || data.roots_code != NO_ROOTS_CODE) {
         printf(RED "Error: cant calculate vertex" BASE_FMT ENDL);
@@ -143,6 +254,19 @@ void get_parabola_vertex(square_equation data, Point * vertex) {
 }
 
 
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that requests plotting the equations
+ * 
+ * Checks if all corners of current square are on the same side of given parabola, if true, parabola is not in this square.
+ * 
+ * \param data square equation structure containing information of it
+ * \param p integer point which corresponding square is checked
+ * \param scale scale in which plot should be drawn
+ * 
+ * \return TRUE if parabola is in this square, FALSE otherwise
+ */
 bool is_parabola_in_this_square(square_equation data, PointInt p, double scale) {
     Point 
     lu_angle = {p.x - 0.5, p.y - 0.5}, 
@@ -161,6 +285,16 @@ bool is_parabola_in_this_square(square_equation data, PointInt p, double scale) 
 }
 
 
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that calculates on which side of parabola given point is
+ * 
+ * \param data square equation structure containing information of it
+ * \param p point which coordinates is used in computation
+ * 
+ * \return 1 if parabola is lower than point, -1 if higher
+ */
 int parabola_lower_or_higher_than_point(square_equation data, Point p) {
     double true_y = data.a * p.x*p.x + data.b * p.x + data.c;
     if (true_y < p.y)
@@ -169,18 +303,50 @@ int parabola_lower_or_higher_than_point(square_equation data, Point p) {
 }
 
 
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that calculates if current square is zero on cartesian coordinates
+ * 
+ * \param p integer point which corresponding square is checked
+ * \param scale scale in which plot should be drawn
+ * 
+ * \return TRUE if current square is zeroth, FALSE otherwise
+ */
 bool is_this_square_zero(PointInt p, double scale) {
     if (p.x == 0 and p.y == 0)
         return TRUE;
     return FALSE;
 }
 
+
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that calculates if current square is on horisontal axis
+ * 
+ * \param p integer point which corresponding square is checked
+ * \param scale scale in which plot should be drawn
+ * 
+ * \return TRUE if current square is on horisontal axis, FALSE otherwise
+ */
 bool is_this_square_on_x_axis(PointInt p, double scale) {
     if (p.y == 0)
         return TRUE;
     return FALSE;
 }
 
+
+/**
+ * \ingroup Plotting
+ * 
+ * \brief Function that calculates if current square is on vertical axis
+ * 
+ * \param p integer point which corresponding square is checked
+ * \param scale scale in which plot should be drawn
+ * 
+ * \return TRUE if current square is on vertical axis, FALSE otherwise
+ */
 bool is_this_square_on_y_axis(PointInt p, double scale) {
     if (p.x == 0)
         return TRUE;

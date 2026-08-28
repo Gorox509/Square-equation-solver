@@ -1,3 +1,12 @@
+/**
+ * \file
+ * 
+ * \brief Header file for solver.cpp file
+ * 
+ * Contains prototypes of functions used
+ */
+
+
 #ifndef SOLVER_H
 
 #define SOLVER_H

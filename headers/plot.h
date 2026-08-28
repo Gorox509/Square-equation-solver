@@ -1,9 +1,18 @@
+/**
+ * \file
+ * 
+ * \brief Header file for plot.cpp file
+ * 
+ * Contains prototypes of functions used
+ */
+
+
 #ifndef PLOT_H
 
 #define PLOT_H
 
-const int MAX_CANVAS_HEIGHT = 400;
-const int MAX_CANVAS_WIDTH = 400;
+const int MAX_CANVAS_HEIGHT = 1000; ///< Maximum possible canvas height
+const int MAX_CANVAS_WIDTH = 1000;  ///< Maximum possible canvas width
 
 int plot_interactive();
 int input_compute_data_for_plot(square_equation * data);
@@ -16,6 +25,6 @@ bool is_this_square_on_x_axis(PointInt p, double scale);
 bool is_this_square_on_y_axis(PointInt p, double scale);
 int parabola_lower_or_higher_than_point(square_equation data, Point p);
 int pick_symbol_to_draw_for_plots(PointInt current_position, square_equation data[], int plots_amount, double scale);
-void print_canvas_to_file(FILE * fp, int height, int width, char canvas[MAX_CANVAS_HEIGHT][MAX_CANVAS_WIDTH], double scale);
+void print_canvas_to_file(FILE * fp, int height, int width, char * canvas[MAX_CANVAS_HEIGHT], double scale);
 
 #endif

@@ -1,3 +1,10 @@
+/**
+ * \file
+ * 
+ * \brief File containing functions for solving square equations
+ */
+
+
 #include "../headers/defines.h"
 
 #include "../headers/plot.h"
@@ -5,6 +12,42 @@
 #include "../headers/solver.h"
 #include "../headers/util_funcs.h"
 
+
+/**
+ * \defgroup SquareSolvers Square equation solver functions
+ * \brief Functions that are used in solving given square equation
+ */
+
+/**
+ * \defgroup SquarePrinters Square equation print functions
+ * \brief Functions that are used in printing results of square equation roots
+ */
+
+/**
+ * \defgroup UserInterface User interface functions
+ * \brief Functions that are used in interaction with user
+ */
+
+
+/**
+ * \ingroup SquareSolvers
+ * 
+ * \brief Solves square equation with given coefficients and puts answers to positions of pointers of answers variables
+ * 
+ * Equation is given as ax^2 + bx + c = 0.
+ * Coefficients shouldn't be infinite or NAN; pointers to answers should not be pointing on the same address and have to point on valid memory sector.
+ * If answer doesn't exist, NAN value is put to its pointer address.
+ * Roots are written in addresses of x1 and x2 in ascending order
+ * 
+ * \param a leading coefficient
+ * \param b first-term coefficient
+ * \param c constant coefficient
+ * 
+ * \param [out] x1 pointer to the first root address
+ * \param [out] x2 pointer to the second root address
+ * 
+ * \return Global constant code of amount of roots that given equation have
+ */
 int square_equation_solve(double a, double b, double c, double *x1, double *x2) { // ax^2 + bx + c = 0
     if (!custom_isfinite(a) || !custom_isfinite(b) || !custom_isfinite(c)) //TODO: error output - done
         return WRONG_COEFS_CODE;
@@ -43,7 +86,26 @@ int square_equation_solve(double a, double b, double c, double *x1, double *x2) 
     }
 }
 
+
+/**
+ * \ingroup SquareSolvers
+ * 
+ * \brief Solves linear equation with given coefficients and puts answer to the address of pointer of answer variable
+ * 
+ * Equation is given as kx + b = 0
+ * Coefficients shouldn't be infinite or NAN; pointer to the answer have to point to valid memory sector.
+ * If answer doesn't exist, NAN value is put to the pointer address.
+ * 
+ * \param k first-term coefficient
+ * \param b constant coefficient
+ * 
+ * \param [out] x pointer to the answer address
+ * 
+ * \return Global constant code of amount of roots that given equation have
+ */
 int linear_equation_solve(double k, double b, double *x) { // kx + b = 0
+
+    *x = NAN;
 
     if (is_double_zero(k))
     {
@@ -58,11 +120,38 @@ int linear_equation_solve(double k, double b, double *x) { // kx + b = 0
     return ONE_ROOT_CODE;
 }
 
+
+/**
+ * \ingroup SquarePrinters
+ * 
+ * \brief Prints square equation solutions in standard output stream
+ * 
+ * Printing format is chosen by given code meaning the amount of roots or code of their absence.
+ * 
+ * \param x1, x2 roots to print
+ * \param n_sol code representing amount of roots
+ * 
+ * \return Global constant code of success or error in function
+ */
 int print_square_equation_sols_stdout(double x1, double x2, int n_sol)
 {
     return print_square_equation_sols_to_file(stdout, x1, x2, n_sol);
 }
 
+
+/**
+ * \ingroup SquarePrinters
+ * 
+ * \brief Prints square equation solutions in file stream
+ * 
+ * Printing format is chosen by given code meaning the amount of roots or code of their absence.
+ * 
+ * \param [out] fp pointer to the file stream where roots are being printed
+ * \param x1, x2 roots to print
+ * \param n_sol code representing amount of roots
+ * 
+ * \return Global constant code of success or error in function
+ */
 int print_square_equation_sols_to_file(FILE * fp, double x1, double x2, int n_sol)
 {
     if (fp == NULL) {
@@ -77,6 +166,20 @@ int print_square_equation_sols_to_file(FILE * fp, double x1, double x2, int n_so
     return return_value;
 }
 
+
+/**
+ * \ingroup SquarePrinters
+ * 
+ * \brief Prints square equation solutions in given string
+ * 
+ * Printing format is chosen by given code meaning the amount of roots or code of their absence.
+ * 
+ * \param [out] str string to print answer to
+ * \param x1, x2 roots to print
+ * \param n_sol code representing amount of roots
+ * 
+ * \return Global constant code of success or error in function
+ */
 int print_square_equation_sols_to_str(char str[], double x1, double x2, int n_sol) {
     if (custom_isinf(x1) || custom_isinf(x2)) // can be NaN;
     {
@@ -118,8 +221,26 @@ int print_square_equation_sols_to_str(char str[], double x1, double x2, int n_so
     return CORRECT;
 }
 
+
+/**
+ * \ingroup UserInterface
+ * 
+ * \brief Asks user to enter square equation coefficients and writes them to given pointers addresses
+ * 
+ * Given pointers have to point to valid memory sector
+ * 
+ * \param [in] a pointer to the leading coefficient
+ * \param [in] b pointer to first-term coefficient
+ * \param [in] c pinter to constant coefficient
+ * 
+ * \return Global constant code of success or error in function 
+ */
 int input_square_coefs(double *a, double *b, double *c)
 {
+
+    assert(a != NULL);
+    assert(b != NULL);
+    assert(c != NULL);
 
     printf("Enter coefs: ");
 
@@ -130,7 +251,7 @@ int input_square_coefs(double *a, double *b, double *c)
         {
             char next[MAX_STR_LEN] = "";
             fgets(next, MAX_STR_LEN, stdin);
-            if (strlen(next) == 0 || non_space_symbols_in_str(next))
+            if (strlen(next) == 0 || is_str_all_space(next))
                 return CORRECT;
         }
 
@@ -143,6 +264,14 @@ int input_square_coefs(double *a, double *b, double *c)
     return GENERAL_ERROR;
 }
 
+
+/**
+ * \ingroup UserInterface
+ * 
+ * \brief Function that provides user with entering square equation coefficients, calculating roots and printing them
+ * 
+ * \return Global constant code of success or error in function
+ */
 int square_equation_interactive()
 {
     double a  = NAN, b  = NAN, c = NAN;
