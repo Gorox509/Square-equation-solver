@@ -65,12 +65,21 @@ int main(int argc, char * argv[]) //TODO: argc argv
             return CORRECT; // quit
 
         case 'f':
+            if (testing_mode) 
+            {
             format_test_interactive_from_file();
+            }
+
+            else
+            {
+                printf(RED "Access denied. Turn on testing mode" BASE_FMT ENDL);
+            }
             break;
 
         case 't':
         {
-            
+            if (testing_mode)
+            {
             char filename[MAX_STR_LEN] = "";
             printf("Enter test file name: ");
             if (scanf("%s", filename) != 1)
@@ -80,6 +89,12 @@ int main(int argc, char * argv[]) //TODO: argc argv
                 break;
             }
             test_solver_from_file(filename);
+            }
+
+            else
+            {
+                printf(RED "Access denied. Turn on testing mode" BASE_FMT ENDL);
+            }
             break;
         }
 

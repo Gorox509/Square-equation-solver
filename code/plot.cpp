@@ -155,10 +155,10 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
     width += width % 2;
     
     char * canvas[MAX_CANVAS_HEIGHT] = {0};
-	for (int i = 0; i < MAX_CANVAS_HEIGHT; ++i) {
-		canvas[i] = (char *) calloc(MAX_CANVAS_WIDTH, sizeof(char));
-	}
-    
+	for (int i = 0; i < height + 1; ++i) {
+		canvas[i] = (char *) calloc(width + 1, sizeof(char));
+    }
+
     PointInt current_position = {.x = -width / 2, .y = height / 2}; // x is to the right, y is upwards, starting in upper left position
 
     for ( ; current_position.y > -height / 2; --current_position.y) {
