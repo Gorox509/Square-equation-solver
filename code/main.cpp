@@ -42,7 +42,7 @@ int main(int argc, char * argv[]) //TODO: argc argv
            "\'p\': plot the equation\n");
            
 
-    if (argc >= 2 && !strcmp(argv[1], "-t")) {
+    if (argc >= 2 && !strcmp(argv[1], "-t")) {  //TODO: getopt && getopt_long
         testing_mode = TRUE;
         printf("\'f\': test format from file\n"
                "\'t\': test solver from file\n");

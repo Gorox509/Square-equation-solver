@@ -36,7 +36,7 @@ int plot_interactive() {
 
     replace_newline_with_null_terminator(filename);
 
-    printf("Enter amounts of plots: ");
+    printf("Enter amount of plots: ");
     int plots_amount = 0, height = 0, width = 0;
     if (scanf("%d", &plots_amount) != 1) {
         printf(RED "Error while reading plots amount" BASE_FMT ENDL);

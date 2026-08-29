@@ -106,13 +106,13 @@ void create_test_two_roots_to_file(FILE * fp) {
 
     assert(fp != NULL);
 
-    double x1 = rand_double(), x2 = rand_double();
-    double a = rand_double();
+    long double x1 = rand_double(), x2 = rand_double();
+    long double b = rand_double();
 
-    double b = (0 - a) * (x1 + x2); // (0 - a) for b to not be -0 
-    double c = a * x1 * x2;
+    long double a = -b / (x1 + x2);
+    long double c = a * x1 * x2;
 
-    fprintf(fp, "%lg %lg %lg %d %lg %lg\n", a, b, c, TWO_ROOTS_CODE, x1, x2);
+    fprintf(fp, "%Lg %Lg %Lg %d %Lg %Lg\n", a, b, c, TWO_ROOTS_CODE, x1, x2);
 }
 
 //todo line - done
@@ -128,12 +128,12 @@ void create_test_two_roots_to_file(FILE * fp) {
  * \param [out] fp pointer to the file stream to write tests to
  */
 void create_test_one_root_to_file(FILE * fp) {
-    double x = rand_double();
-    double k = rand_double();
+    long double x = rand_double();
+    long double b = rand_double();
 
-    double b = (0 - k) * x; // (0 - k) for b to not be -0
+    long double k = -b / x;
 
-    fprintf(fp, "0 %lg %lg %d %lg\n", k, b, ONE_ROOT_CODE, x);
+    fprintf(fp, "0 %Lg %Lg %d %Lg\n", k, b, ONE_ROOT_CODE, x);
 }
 
 
