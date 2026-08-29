@@ -4,9 +4,10 @@
  * \brief Main file that is used for processing user commands
  */
 
-
+#include <getopt.h>
 #include "../headers/defines.h"
 
+#include "../headers/main.h"
 #include "../headers/plot.h"
 #include "../headers/testing.h"
 #include "../headers/solver.h"
@@ -34,16 +35,16 @@
 int main(int argc, char * argv[]) //TODO: argc argv
 {
     int cmd = 0;
-    int testing_mode = FALSE; 
+    bool testing_mode = FALSE; 
+
+    get_options(argc, argv, &testing_mode);
 
     printf("Possible commands:\n"
            "\'q\': quit\n"
            "\'s\': solve equation\n"
            "\'p\': plot the equation\n");
-           
 
-    if (argc >= 2 && !strcmp(argv[1], "-t")) {  //TODO: getopt && getopt_long
-        testing_mode = TRUE;
+    if (testing_mode) {
         printf("\'f\': test format from file\n"
                "\'t\': test solver from file\n");
     }
@@ -119,4 +120,37 @@ int main(int argc, char * argv[]) //TODO: argc argv
         printf("Enter command: ");
     }
     return CORRECT;
+}
+
+
+/**
+ * \ingroup UserInterface
+ * 
+ * \brief Function that is used to get console arguments and pass them to the variables
+ * 
+ * Argv have to be valid pointer.
+ * In case of wrong options, prints error message and exits the program
+ * 
+ * \param argc amount of used console arguments
+ * \param argv strings containing the console arguments used. First value is always the command used to execute the file
+ * \param [in] testing_mode pointer to the variable containing the state of testing mode
+ */
+void get_options(int argc, char * argv[], bool * testing_mode) {
+
+    assert(argv != NULL);
+    assert(testing_mode != NULL);
+
+    int opt = 0;
+    while ((opt = getopt(argc, argv, "t")) != -1) {
+        switch (opt) 
+        {
+            case 't':
+                *testing_mode = TRUE;
+                break;
+
+            default:
+                fprintf(stderr, RED "Fatal error: wrong opitons" BASE_FMT ENDL);
+                exit(INCORRECT);
+        }
+    } //TODO: getopt && getopt_long - done
 }
