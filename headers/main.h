@@ -2,6 +2,6 @@
 
 #define MAIN_H
 
-void get_options(int argc, char * argv[], bool * testing_mode);
+void get_options(int argc, char *argv[], bool *testing_mode);
 
 #endif

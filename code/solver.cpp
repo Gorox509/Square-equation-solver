@@ -152,7 +152,7 @@ int print_square_equation_sols_stdout(double x1, double x2, int n_sol)
  * 
  * \return Global constant code of success or error in function
  */
-int print_square_equation_sols_to_file(FILE * fp, double x1, double x2, int n_sol)
+int print_square_equation_sols_to_file(FILE *fp, double x1, double x2, int n_sol)
 {
     if (fp == NULL) {
         printf(RED "Error while file opening" BASE_FMT ENDL);

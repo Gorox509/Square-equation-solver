@@ -15,10 +15,10 @@ const int MAX_CANVAS_HEIGHT = 1000; ///< Maximum possible canvas height
 const int MAX_CANVAS_WIDTH = 1000;  ///< Maximum possible canvas width
 
 int plot_interactive();
-int input_compute_data_for_plot(square_equation * data);
-int plot(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width);
+int input_compute_data_for_plot(square_equation *data);
+int plot(FILE *fp, square_equation data[], int plots_amount, double scale, int height, int width);
 void get_parabola_vertex(square_equation equation, Point * vertex);
-void plot_squares(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width);
+void plot_squares(FILE *fp, square_equation data[], int plots_amount, double scale, int height, int width);
 bool is_parabola_in_this_square(square_equation data, PointInt p, double scale);
 bool is_this_square_zero(PointInt p, double scale);
 bool is_this_square_on_x_axis(PointInt p, double scale);

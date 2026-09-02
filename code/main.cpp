@@ -32,7 +32,7 @@
  * 
  * \return CORRECT code if program ends successfully, various error codes in case of error
  */
-int main(int argc, char * argv[]) //TODO: argc argv
+int main(int argc, char *argv[]) //TODO: argc argv
 {
     int cmd = 0;
     bool testing_mode = FALSE; 
@@ -135,7 +135,7 @@ int main(int argc, char * argv[]) //TODO: argc argv
  * \param argv strings containing the console arguments used. First value is always the command used to execute the file
  * \param [in] testing_mode pointer to the variable containing the state of testing mode
  */
-void get_options(int argc, char * argv[], bool * testing_mode) {
+void get_options(int argc, char *argv[], bool *testing_mode) {
 
     assert(argv != NULL);
     assert(testing_mode != NULL);

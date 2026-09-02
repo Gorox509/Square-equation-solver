@@ -89,7 +89,7 @@ int plot_interactive() {
  * 
  * \return Global constant code of success or error in function
  */
-int input_compute_data_for_plot(square_equation * data) {
+int input_compute_data_for_plot(square_equation *data) {
     int input_err = input_square_coefs(&data->a, &data->b, &data->c);
 
 	if (input_err == GENERAL_ERROR) {
@@ -117,7 +117,7 @@ int input_compute_data_for_plot(square_equation * data) {
  * 
  * \return Global constant code of success or error in function
  */
-int plot(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width) {
+int plot(FILE *fp, square_equation data[], int plots_amount, double scale, int height, int width) {
     if (isinf(scale) || height >= MAX_CANVAS_HEIGHT || width >= MAX_CANVAS_WIDTH) {
         printf(RED "Error: invalid scale" BASE_FMT ENDL);
         return INCORRECT;
@@ -145,7 +145,7 @@ int plot(FILE * fp, square_equation data[], int plots_amount, double scale, int 
  * \param height height of canvas
  * \param width width of canvas
  */
-void plot_squares(FILE * fp, square_equation data[], int plots_amount, double scale, int height, int width) {
+void plot_squares(FILE *fp, square_equation data[], int plots_amount, double scale, int height, int width) {
 
     assert(fp != NULL);
 
@@ -154,7 +154,7 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
     height += height % 2; // to even number due to ploting format reasons
     width += width % 2;
     
-    char * canvas[MAX_CANVAS_HEIGHT] = {0};
+    char *canvas[MAX_CANVAS_HEIGHT] = {0};
 	for (int i = 0; i < height + 1; ++i) {
 		canvas[i] = (char *) calloc(width + 1, sizeof(char));
     }
@@ -191,7 +191,7 @@ void plot_squares(FILE * fp, square_equation data[], int plots_amount, double sc
  * \param height height of canvas
  * \param width width of canvas
  */
-void print_canvas_to_file(FILE * fp, int height, int width, char * canvas[MAX_CANVAS_HEIGHT], double scale) {
+void print_canvas_to_file(FILE *fp, int height, int width, char *canvas[MAX_CANVAS_HEIGHT], double scale) {
 
     assert(fp != NULL);
 
@@ -245,7 +245,7 @@ int pick_symbol_to_draw_for_plots(PointInt current_position, square_equation dat
  * \param data array of square equation structures containing information to plot them
  * \param [out] vertex point structure in which coordinates of parabola vertex are put into
  */
-void get_parabola_vertex(square_equation data, Point * vertex) {
+void get_parabola_vertex(square_equation data, Point *vertex) {
     if (data.roots_code != TWO_ROOTS_CODE || data.roots_code != NO_ROOTS_CODE) {
         printf(RED "Error: cant calculate vertex" BASE_FMT ENDL);
     }

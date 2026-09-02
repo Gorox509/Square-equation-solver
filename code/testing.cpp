@@ -75,7 +75,7 @@ int test_solver_from_file(char filename[]) {
  * 
  * \return Amount of copied from file lines
  */
-int copy_test_file_to_buf(char * buf[MAX_BUF_LEN], FILE * fp) {
+int copy_test_file_to_buf(char *buf[MAX_BUF_LEN], FILE *fp) {
 
 	assert(fp != NULL);
 
@@ -100,7 +100,7 @@ int copy_test_file_to_buf(char * buf[MAX_BUF_LEN], FILE * fp) {
  * 
  * \return Global constant code of success or error in function
  */
-int do_solver_tests(char * buf[MAX_BUF_LEN], int n_lines) {
+int do_solver_tests(char *buf[MAX_BUF_LEN], int n_lines) {
 	int n_tests = 0, n_wrong_tests = 0;
 
 
@@ -161,7 +161,7 @@ int do_solver_test(char line[]) {
  * 
  * \return Global constant code of success or error in function
  */
-int do_reading_for_test_from_line(char line[], square_equation * test) {
+int do_reading_for_test_from_line(char line[], square_equation *test) {
 
 	assert(test != NULL);
 
@@ -289,7 +289,7 @@ int format_test_interactive_from_file() {
  * 
  * \return Global constant code of success or error in function
  */
-int do_format_comparison_from_buf(int buf_len, char * buf_program[MAX_BUF_LEN], char * buf_true[MAX_BUF_LEN]) {
+int do_format_comparison_from_buf(int buf_len, char *buf_program[MAX_BUF_LEN], char *buf_true[MAX_BUF_LEN]) {
 	int n_tests = 0, n_failed_tests = 0, current_test_num = 0;
 
 	
@@ -325,7 +325,7 @@ int do_format_comparison_from_buf(int buf_len, char * buf_program[MAX_BUF_LEN], 
  * 
  * \return Global constant code of success or error in function
  */
-int read_format_test_from_file_to_buf(char filename[MAX_STR_LEN], char * buf_program[MAX_BUF_LEN], char * buf_true[MAX_BUF_LEN]) {
+int read_format_test_from_file_to_buf(char filename[MAX_STR_LEN], char *buf_program[MAX_BUF_LEN], char *buf_true[MAX_BUF_LEN]) {
 	if (filename == NULL) {
 		return GENERAL_ERROR;
 	}

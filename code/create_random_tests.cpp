@@ -71,7 +71,7 @@ int main() {
  * \param n amount of roots to create
  * \param n_roots amount of roots tests should have
  */
-void create_n_tests_to_file(FILE * fp, int n, int n_roots_neeeded) {
+void create_n_tests_to_file(FILE *fp, int n, int n_roots_neeeded) {
 
     assert(fp != NULL);
 
@@ -102,7 +102,7 @@ void create_n_tests_to_file(FILE * fp, int n, int n_roots_neeeded) {
  * 
  * \param [out] fp pointer to the file stream to write tests to
  */
-void create_test_two_roots_to_file(FILE * fp) {
+void create_test_two_roots_to_file(FILE *fp) {
 
     assert(fp != NULL);
 
@@ -127,7 +127,7 @@ void create_test_two_roots_to_file(FILE * fp) {
  * 
  * \param [out] fp pointer to the file stream to write tests to
  */
-void create_test_one_root_to_file(FILE * fp) {
+void create_test_one_root_to_file(FILE *fp) {
     long double x = rand_double();
     long double b = rand_double();
 
